@@ -125,7 +125,12 @@
 
         {{-- Footer --}}
         <footer class="border-t border-zinc-200 dark:border-zinc-800 px-6 py-8">
-            <div class="mx-auto max-w-5xl flex flex-col items-center gap-2 text-sm text-zinc-500 dark:text-zinc-400">
+            <div class="mx-auto max-w-5xl flex flex-col items-center gap-4 text-sm text-zinc-500 dark:text-zinc-400">
+                <div class="flex flex-wrap justify-center gap-6">
+                    <a href="{{ url('/privacy-policy') }}" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Kebijakan Privasi</a>
+                    <a href="{{ url('/terms-of-service') }}" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Syarat & Ketentuan</a>
+                    <a href="{{ url('/support') }}" class="hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors">Bantuan</a>
+                </div>
                 <div class="flex items-center gap-2">
                     <img src="{{ asset('images/logo.png') }}" alt="LAZ Al Azhar 5" class="h-6 w-6 rounded-full">
                     <span class="font-medium text-zinc-700 dark:text-zinc-300">Lembaga Amil Zakat Al Azhar 5</span>
