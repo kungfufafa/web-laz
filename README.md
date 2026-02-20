@@ -42,6 +42,37 @@ We would like to extend our thanks to the following sponsors for funding Laravel
 - **[Redberry](https://redberry.international/laravel-development)**
 - **[Active Logic](https://activelogic.com)**
 
+## API Endpoints
+
+### Account Deletion
+
+**POST** `/api/account-deletion`
+
+Delete user account by phone number.
+
+**Request body:**
+```json
+{
+  "phone": "08123456789"
+}
+```
+
+**Response (200):**
+```json
+{
+  "message": "Akun berhasil dihapus"
+}
+```
+
+**Rate limited:** 5 requests per minute
+
+**Phone formats accepted:**
+- `08123456789` (local format)
+- `628123456789` (international without +)
+- `+628123456789` (international with +)
+
+**Frontend page:** `/account-deletion`
+
 ## Contributing
 
 Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
