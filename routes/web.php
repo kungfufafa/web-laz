@@ -17,3 +17,7 @@ Route::get('/terms-of-service', function () {
 Route::get('/support', function () {
     return view('support');
 })->name('support');
+
+Route::get('/account-deletion', function () {
+    return view('account-deletion');
+})->name('account-deletion');
