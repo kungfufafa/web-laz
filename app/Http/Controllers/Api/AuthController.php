@@ -81,7 +81,7 @@ class AuthController extends Controller
     public function deleteAccount(Request $request)
     {
         $validated = $request->validate([
-            'phone' => ['required', 'string', 'regex:/^(?:\+62|62|0)8[1-9][0-9]{6,9}$/'],
+            'phone' => ['required', 'string', 'regex:/^(?:\+62|62|0)8[1-9][0-9]{6,11}$/'],
         ], [
             'phone.regex' => 'Format nomor telepon harus dimulai dengan 08, 628, atau +628',
         ]);

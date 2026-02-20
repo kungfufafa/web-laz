@@ -163,7 +163,7 @@
             const messageContent = document.getElementById('messageContent');
 
             function validatePhone(phone) {
-                const regex = /^(?:\+62|62|0)8[1-9][0-9]{6,9}$/;
+                const regex = /^(?:\+62|62|0)8[1-9][0-9]{6,11}$/;
                 return regex.test(phone);
             }
 
