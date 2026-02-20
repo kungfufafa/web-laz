@@ -77,4 +77,35 @@ class AuthController extends Controller
             'message' => 'Logged out successfully',
         ]);
     }
+
+    public function deleteAccount(Request $request)
+    {
+        $validated = $request->validate([
+            'phone' => ['required', 'string', 'regex:/^(?:\+62|62|0)8[1-9][0-9]{6,9}$/'],
+        ], [
+            'phone.regex' => 'Format nomor telepon harus dimulai dengan 08, 628, atau +628',
+        ]);
+
+        // Normalize phone number for database lookup
+        $phone = $validated['phone'];
+        if (str_starts_with($phone, '+62')) {
+            $phone = '0' . substr($phone, 3);
+        } elseif (str_starts_with($phone, '62')) {
+            $phone = '0' . substr($phone, 2);
+        }
+
+        $user = User::where('phone', $phone)->first();
+
+        if (! $user) {
+            return response()->json([
+                'message' => 'Akun dengan nomor telepon tersebut tidak ditemukan',
+            ], 404);
+        }
+
+        $user->delete();
+
+        return response()->json([
+            'message' => 'Akun berhasil dihapus',
+        ]);
+    }
 }
