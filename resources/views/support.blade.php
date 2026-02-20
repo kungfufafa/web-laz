@@ -100,7 +100,7 @@
                         <div class="rounded-xl bg-zinc-50 dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 p-6">
                             <h3 class="font-semibold text-zinc-900 dark:text-zinc-100 mb-2">Bagaimana cara menghapus akun?</h3>
                             <p class="text-zinc-600 dark:text-zinc-400 text-sm leading-relaxed">
-                                Untuk menghapus akun, silakan hubungi tim support kami melalui email di info@rizqis.com dengan subjek "Permintaan Hapus Akun". Sertakan email akun yang ingin dihapus.
+                                Untuk menghapus akun, silakan hubungi tim support kami melalui email di info@lazalazhar5.com dengan subjek "Permintaan Hapus Akun". Sertakan email akun yang ingin dihapus.
                             </p>
                         </div>
                     </div>
@@ -121,7 +121,7 @@
                                 <h3 class="font-semibold text-zinc-900 dark:text-zinc-100">Email</h3>
                             </div>
                             <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-2">Kirim pertanyaan atau keluhan Anda</p>
-                            <a href="mailto:info@rizqis.com" class="text-emerald-600 dark:text-emerald-400 font-medium hover:underline">info@rizqis.com</a>
+                            <a href="mailto:info@lazalazhar5.com" class="text-emerald-600 dark:text-emerald-400 font-medium hover:underline">info@lazalazhar5.com</a>
                         </div>
 
                         <div class="rounded-xl bg-emerald-50 dark:bg-emerald-950/30 border border-emerald-200 dark:border-emerald-800 p-6">

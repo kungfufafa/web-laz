@@ -120,7 +120,7 @@
                                 Jika Anda mengalami masalah atau memiliki pertanyaan seputar penghapusan akun, Anda dapat menghubungi kami melalui:
                             </p>
                             <ul class="list-none space-y-2">
-                                <li><strong>Email:</strong> info@rizqis.com</li>
+                                <li><strong>Email:</strong> info@lazalazhar5.com</li>
                                 <li><strong>WhatsApp:</strong> +62 812-3456-7890</li>
                             </ul>
                         </div>
