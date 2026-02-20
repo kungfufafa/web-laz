@@ -13,7 +13,7 @@ use Illuminate\Support\Facades\Route;
 Route::middleware('throttle:5,1')->group(function () {
     Route::post('/register', [AuthController::class, 'register']);
     Route::post('/login', [AuthController::class, 'login']);
-    Route::post('/account-deletion', [AuthController::class, 'deleteAccount']);
+    Route::post('/account-deletion', [AuthController::class, 'deleteAccount'])->name('account.deletion');
 });
 Route::get('/media/{path}', [MediaController::class, 'show'])->where('path', '.*');
 
