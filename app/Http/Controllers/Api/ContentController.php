@@ -23,6 +23,8 @@ class ContentController extends Controller
 
     public function article(Article $article): ArticleResource
     {
+        abort_unless($article->is_published, 404);
+
         return new ArticleResource($article);
     }
 

@@ -6,6 +6,8 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
+use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
 
 class MemberPrayersTable
@@ -37,7 +39,16 @@ class MemberPrayersTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('status')
+                    ->label('Status')
+                    ->options([
+                        'published' => 'Published',
+                        'hidden' => 'Hidden',
+                    ]),
+                TernaryFilter::make('is_anonymous')
+                    ->label('Anonim')
+                    ->trueLabel('Anonim')
+                    ->falseLabel('Tidak Anonim'),
             ])
             ->recordActions([
                 EditAction::make(),

@@ -34,7 +34,7 @@ final class MediaUrl
             return "{$host}/api/media/".self::encodePath($normalized);
         }
 
-        return "{$host}/storage/{$normalized}";
+        return null;
     }
 
     public static function normalizePath(string $path): string

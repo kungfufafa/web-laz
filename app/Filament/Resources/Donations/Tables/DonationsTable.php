@@ -6,6 +6,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Tables\Columns\TextColumn;
+use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
 
 class DonationsTable
@@ -49,7 +50,35 @@ class DonationsTable
                     ->toggleable(isToggledHiddenByDefault: true),
             ])
             ->filters([
-                //
+                SelectFilter::make('category')
+                    ->label('Kategori')
+                    ->options([
+                        'zakat' => 'Zakat',
+                        'infak' => 'Infak',
+                        'sedekah' => 'Sedekah',
+                    ]),
+                SelectFilter::make('payment_type')
+                    ->label('Jenis Donasi')
+                    ->options([
+                        'maal' => 'Zakat Maal',
+                        'fitrah' => 'Zakat Fitrah',
+                        'profesi' => 'Zakat Profesi',
+                        'kemanusiaan' => 'Infak Kemanusiaan',
+                        'jariyah' => 'Sedekah Jariyah',
+                        'umum' => 'Umum',
+                    ]),
+                SelectFilter::make('status')
+                    ->label('Status')
+                    ->options([
+                        'pending' => 'Pending',
+                        'verified' => 'Terverifikasi',
+                        'rejected' => 'Ditolak',
+                    ]),
+                SelectFilter::make('payment_method_id')
+                    ->label('Metode Pembayaran')
+                    ->relationship('paymentMethod', 'name')
+                    ->searchable()
+                    ->preload(),
             ])
             ->recordActions([
                 EditAction::make(),

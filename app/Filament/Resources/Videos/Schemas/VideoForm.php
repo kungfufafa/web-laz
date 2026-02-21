@@ -26,6 +26,15 @@ class VideoForm
                             ->placeholder('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
                             ->helperText('Judul, deskripsi, dan thumbnail akan terisi otomatis saat field ini selesai diinput.')
                             ->required()
+                            ->rule(static function (): \Closure {
+                                return static function (string $attribute, mixed $value, \Closure $fail): void {
+                                    $input = is_scalar($value) ? trim((string) $value) : '';
+
+                                    if (YouTube::extractVideoId($input) === null) {
+                                        $fail('Link YouTube tidak valid.');
+                                    }
+                                };
+                            })
                             ->live(onBlur: true)
                             ->columnSpanFull()
                             ->afterStateUpdated(function ($set, ?string $state): void {
@@ -51,7 +60,7 @@ class VideoForm
                                     $set('thumbnail', $metadata['thumbnail']);
                                 }
                             })
-                            ->dehydrateStateUsing(fn (?string $state): string => YouTube::extractVideoId($state) ?? trim((string) $state)),
+                            ->dehydrateStateUsing(fn (?string $state): ?string => YouTube::extractVideoId($state)),
                         TextInput::make('title')
                             ->label('Judul Video')
                             ->placeholder('Judul konten video')

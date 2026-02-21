@@ -3,6 +3,7 @@
 namespace App\Http\Resources;
 
 use App\Support\MediaUrl;
+use App\Support\YouTube;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 
@@ -15,13 +16,16 @@ class VideoResource extends JsonResource
      */
     public function toArray(Request $request): array
     {
+        $youtubeId = YouTube::extractVideoId($this->youtube_id);
         $thumbnailUrl = MediaUrl::resolve($request, $this->thumbnail)
-            ?: ($this->youtube_id ? "https://img.youtube.com/vi/{$this->youtube_id}/hqdefault.jpg" : null);
+            ?: ($youtubeId ? "https://img.youtube.com/vi/{$youtubeId}/hqdefault.jpg" : null);
 
         return [
             'id' => $this->id,
             'title' => $this->title,
-            'youtube_id' => $this->youtube_id,
+            'youtube_id' => $youtubeId,
+            'youtube_url' => $youtubeId ? "https://www.youtube.com/watch?v={$youtubeId}" : null,
+            'youtube_embed_url' => $youtubeId ? "https://www.youtube.com/embed/{$youtubeId}" : null,
             'description' => $this->description,
             'thumbnail' => $thumbnailUrl,
             'published_at' => $this->created_at,

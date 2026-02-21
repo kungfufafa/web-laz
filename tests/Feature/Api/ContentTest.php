@@ -28,6 +28,14 @@ test('can show article detail', function () {
         ->assertJsonPath('data.title', $article->title);
 });
 
+test('cannot show unpublished article detail', function () {
+    $article = Article::factory()->create(['is_published' => false]);
+
+    $response = $this->getJson("/api/articles/{$article->slug}");
+
+    $response->assertNotFound();
+});
+
 test('article endpoint uses created_at when published_at is older than created_at', function () {
     $article = Article::factory()->create([
         'is_published' => true,
@@ -44,6 +52,8 @@ test('article endpoint uses created_at when published_at is older than created_a
 });
 
 test('article endpoint returns absolute thumbnail url for uploaded file path', function () {
+    Storage::disk('public')->put('articles/cover.jpg', 'cover-content');
+
     $article = Article::factory()->create([
         'is_published' => true,
         'thumbnail' => 'articles/cover.jpg',
@@ -56,6 +66,18 @@ test('article endpoint returns absolute thumbnail url for uploaded file path', f
 
     expect($thumbnail)->toEndWith('/storage/articles/cover.jpg');
     expect($response->json('data.0.id'))->toBe($article->id);
+});
+
+test('article endpoint returns null thumbnail when file path does not exist', function () {
+    Article::factory()->create([
+        'is_published' => true,
+        'thumbnail' => 'articles/missing-cover.jpg',
+    ]);
+
+    $response = $this->getJson('/api/articles');
+
+    $response->assertStatus(200)
+        ->assertJsonPath('data.0.thumbnail', null);
 });
 
 test('article endpoint uses api media url when thumbnail exists in local disk', function () {
@@ -91,10 +113,14 @@ test('video endpoint returns normalized youtube id when url is stored', function
     $response = $this->getJson('/api/videos');
 
     $response->assertStatus(200)
-        ->assertJsonPath('data.0.youtube_id', 'dQw4w9WgXcQ');
+        ->assertJsonPath('data.0.youtube_id', 'dQw4w9WgXcQ')
+        ->assertJsonPath('data.0.youtube_url', 'https://www.youtube.com/watch?v=dQw4w9WgXcQ')
+        ->assertJsonPath('data.0.youtube_embed_url', 'https://www.youtube.com/embed/dQw4w9WgXcQ');
 });
 
 test('video endpoint returns absolute thumbnail url for uploaded file path', function () {
+    Storage::disk('public')->put('videos/cover.jpg', 'cover-content');
+
     Video::factory()->create([
         'is_published' => true,
         'thumbnail' => 'videos/cover.jpg',
@@ -106,6 +132,22 @@ test('video endpoint returns absolute thumbnail url for uploaded file path', fun
     $thumbnail = $response->json('data.0.thumbnail');
 
     expect($thumbnail)->toEndWith('/storage/videos/cover.jpg');
+});
+
+test('video endpoint returns null youtube urls when stored youtube id is invalid', function () {
+    Video::factory()->create([
+        'is_published' => true,
+        'youtube_id' => 'invalid-video-id',
+        'thumbnail' => null,
+    ]);
+
+    $response = $this->getJson('/api/videos');
+
+    $response->assertStatus(200)
+        ->assertJsonPath('data.0.youtube_id', null)
+        ->assertJsonPath('data.0.youtube_url', null)
+        ->assertJsonPath('data.0.youtube_embed_url', null)
+        ->assertJsonPath('data.0.thumbnail', null);
 });
 
 test('media endpoint can serve file from local disk', function () {
