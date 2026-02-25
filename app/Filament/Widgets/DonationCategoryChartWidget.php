@@ -2,11 +2,14 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\HasShieldWidgetPermission;
 use App\Models\Donation;
 use Filament\Widgets\ChartWidget;
 
 class DonationCategoryChartWidget extends ChartWidget
 {
+    use HasShieldWidgetPermission;
+
     protected static ?int $sort = 5;
 
     public function getHeading(): ?string

@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\HasShieldWidgetPermission;
 use App\Models\Donation;
 use Filament\Tables;
 use Filament\Tables\Table;
@@ -9,6 +10,8 @@ use Filament\Widgets\TableWidget as BaseWidget;
 
 class RecentDonationsWidget extends BaseWidget
 {
+    use HasShieldWidgetPermission;
+
     protected static ?int $sort = 3;
 
     protected int | string | array $columnSpan = 'full';

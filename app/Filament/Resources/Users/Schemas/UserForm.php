@@ -7,9 +7,51 @@ use Filament\Forms\Components\Select;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
 use Filament\Schemas\Schema;
+use Illuminate\Support\Facades\Schema as SchemaFacade;
+use Illuminate\Support\Str;
+use Spatie\Permission\Models\Role;
 
 class UserForm
 {
+    /**
+     * @return array<string, string>
+     */
+    protected static function roleOptions(): array
+    {
+        $rolesTable = config('permission.table_names.roles');
+
+        if (! is_string($rolesTable) || ! SchemaFacade::hasTable($rolesTable)) {
+            return [
+                'admin' => 'Admin',
+                'member' => 'Member',
+            ];
+        }
+
+        $roles = Role::query()
+            ->orderBy('name')
+            ->pluck('name', 'name')
+            ->all();
+
+        if ($roles === []) {
+            return [
+                'admin' => 'Admin',
+                'member' => 'Member',
+            ];
+        }
+
+        $formattedRoles = [];
+
+        foreach ($roles as $roleValue => $roleName) {
+            if (! is_string($roleValue) || ! is_string($roleName)) {
+                continue;
+            }
+
+            $formattedRoles[$roleValue] = Str::of($roleName)->replace('_', ' ')->headline()->toString();
+        }
+
+        return $formattedRoles;
+    }
+
     public static function configure(Schema $schema): Schema
     {
         return $schema
@@ -36,10 +78,7 @@ class UserForm
                             ->visibleOn('create'),
                         Select::make('role')
                             ->label('Peran')
-                            ->options([
-                                'admin' => 'Admin',
-                                'member' => 'Member',
-                            ])
+                            ->options(fn (): array => static::roleOptions())
                             ->required()
                             ->default('member'),
                     ]),

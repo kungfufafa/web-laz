@@ -2,11 +2,14 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\HasShieldWidgetPermission;
 use App\Models\Donation;
 use Filament\Widgets\ChartWidget;
 
 class DonationChartWidget extends ChartWidget
 {
+    use HasShieldWidgetPermission;
+
     protected static ?int $sort = 4;
 
     protected int | string | array $columnSpan = 'full';

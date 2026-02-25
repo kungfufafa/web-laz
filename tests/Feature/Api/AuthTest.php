@@ -12,7 +12,7 @@ uses(RefreshDatabase::class);
 test('user can register', function () {
     $response = postJson('/api/register', [
         'name' => 'Test User',
-        'email' => 'test@example.com',
+        'phone' => '081234567890',
         'password' => 'password',
         'password_confirmation' => 'password',
     ]);
@@ -23,17 +23,17 @@ test('user can register', function () {
             'token_type',
         ]);
 
-    expect(User::where('email', 'test@example.com')->exists())->toBeTrue();
+    expect(User::where('phone', '081234567890')->exists())->toBeTrue();
 });
 
 test('user can login', function () {
-    $user = User::factory()->create([
-        'email' => 'test@example.com',
+    User::factory()->create([
+        'phone' => '081234567890',
         'password' => bcrypt('password'),
     ]);
 
     $response = postJson('/api/login', [
-        'email' => 'test@example.com',
+        'phone' => '+6281234567890',
         'password' => 'password',
     ]);
 

@@ -4,6 +4,8 @@ namespace Database\Seeders;
 
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class UserSeeder extends Seeder
 {
@@ -12,12 +14,28 @@ class UserSeeder extends Seeder
      */
     public function run(): array
     {
-        User::factory()->create([
-            'name' => 'Admin User',
-            'email' => 'admin@lazalazhar5.com',
-            'password' => 'password',
-            'role' => 'admin',
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
+
+        Role::query()->firstOrCreate([
+            'name' => 'admin',
+            'guard_name' => 'web',
         ]);
+
+        Role::query()->firstOrCreate([
+            'name' => 'member',
+            'guard_name' => 'web',
+        ]);
+
+        User::query()->firstOrCreate(
+            [
+                'email' => 'admin@lazalazhar5.com',
+            ],
+            [
+                'name' => 'Admin User',
+                'password' => 'password',
+                'role' => 'admin',
+            ],
+        );
 
         $members = User::factory(10)->create([
             'role' => 'member',

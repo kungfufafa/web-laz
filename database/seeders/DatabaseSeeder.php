@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Artisan;
 
 class DatabaseSeeder extends Seeder
 {
@@ -11,6 +12,13 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
+        Artisan::call('shield:generate', [
+            '--all' => true,
+            '--option' => 'permissions',
+            '--panel' => 'admin',
+            '--no-interaction' => true,
+        ]);
+
         $this->call([
             UserSeeder::class,
             // PaymentMethodSeeder::class,

@@ -121,6 +121,33 @@
                     </div>
                 </div>
             </section>
+
+            {{-- Location --}}
+            <section class="border-t border-zinc-200 dark:border-zinc-800 px-6 py-16">
+                <div class="mx-auto max-w-5xl">
+                    <div class="rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-8">
+                        <div class="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+                            <div>
+                                <h2 class="text-2xl font-bold">Lokasi LAZ Al Azhar 5</h2>
+                                <p class="mt-2 text-zinc-600 dark:text-zinc-400">
+                                    Kunjungi kantor kami secara langsung melalui Google Maps.
+                                </p>
+                            </div>
+                            <a
+                                href="https://maps.app.goo.gl/eqfW5GtsdQ1YNcT46?g_st=aw"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700 transition-colors"
+                            >
+                                Lihat Lokasi
+                            </a>
+                        </div>
+                        <p class="mt-4 break-all text-sm text-zinc-500 dark:text-zinc-400">
+                            https://maps.app.goo.gl/eqfW5GtsdQ1YNcT46?g_st=aw
+                        </p>
+                    </div>
+                </div>
+            </section>
         </main>
 
         {{-- Footer --}}

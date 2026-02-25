@@ -2,12 +2,15 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\HasShieldWidgetPermission;
 use App\Models\Donation;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
 use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class DonationStatsWidget extends BaseWidget
 {
+    use HasShieldWidgetPermission;
+
     protected static ?int $sort = 1;
 
     protected function getStats(): array

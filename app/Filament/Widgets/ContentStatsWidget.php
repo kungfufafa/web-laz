@@ -2,6 +2,7 @@
 
 namespace App\Filament\Widgets;
 
+use App\Filament\Widgets\Concerns\HasShieldWidgetPermission;
 use App\Models\Article;
 use App\Models\Donation;
 use App\Models\MemberPrayer;
@@ -13,6 +14,8 @@ use Filament\Widgets\StatsOverviewWidget\Stat;
 
 class ContentStatsWidget extends BaseWidget
 {
+    use HasShieldWidgetPermission;
+
     protected static ?int $sort = 2;
 
     protected function getStats(): array
