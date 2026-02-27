@@ -52,7 +52,7 @@ test('can calculate zakat fitrah amount', function () {
 });
 
 test('can create a donation', function () {
-    Storage::fake('public');
+    Storage::fake('local');
     $user = User::factory()->create();
     $paymentMethod = PaymentMethod::factory()->create(['is_active' => true]);
     $file = UploadedFile::fake()->image('proof.jpg');
@@ -76,6 +76,7 @@ test('can create a donation', function () {
                 'payment_type',
                 'status',
                 'payment_method_name',
+                'proof_image_url',
                 'created_at',
             ],
         ]);
@@ -86,8 +87,33 @@ test('can create a donation', function () {
     expect($donation->payment_type)->toEqual('umum');
     expect($donation->status)->toEqual('pending');
     expect($donation->user_id)->toEqual($user->id);
+    expect($response->json('data.proof_image_url'))
+        ->toBeString()
+        ->toContain('expiration=')
+        ->not->toContain('/api/media/');
 
-    Storage::disk('public')->assertExists($donation->proof_image);
+    Storage::disk('local')->assertExists($donation->proof_image);
+});
+
+test('donation history does not expose proof url when file only exists on public disk', function () {
+    Storage::fake('local');
+    Storage::fake('public');
+
+    $paymentMethod = PaymentMethod::factory()->create(['is_active' => true]);
+    $donation = Donation::factory()->create([
+        'user_id' => null,
+        'guest_token' => 'guest-token-public-proof',
+        'payment_method_id' => $paymentMethod->id,
+        'proof_image' => 'proofs/public-only-proof.jpg',
+    ]);
+
+    Storage::disk('public')->put($donation->proof_image, 'public-proof-content');
+
+    $response = $this->getJson('/api/donations/history?guest_token=guest-token-public-proof');
+
+    $response->assertStatus(200)
+        ->assertJsonPath('data.0.id', $donation->uuid)
+        ->assertJsonPath('data.0.proof_image_url', null);
 });
 
 test('donation creation validation fails', function () {

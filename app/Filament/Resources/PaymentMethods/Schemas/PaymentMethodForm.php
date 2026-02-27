@@ -52,7 +52,9 @@ class PaymentMethodForm
                             ->required(),
                         FileUpload::make('logo')
                             ->label(__('filament.resources.payment_methods.fields.logo'))
-                            ->image(),
+                            ->image()
+                            ->disk('public')
+                            ->visibility('public'),
                     ]),
                 Section::make(__('filament.resources.payment_methods.sections.qris_configuration'))
                     ->description(__('filament.resources.payment_methods.descriptions.qris_configuration'))

@@ -8,6 +8,7 @@ use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
 use Filament\Actions\EditAction;
 use Filament\Forms\Components\Textarea;
+use Filament\Support\Enums\Width;
 use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Table;
@@ -49,8 +50,21 @@ class DonationsTable
                     ->formatStateUsing(fn (?string $state): string => filled($state)
                         ? __('filament.resources.donations.columns.view_proof')
                         : __('filament.resources.donations.columns.no_proof'))
-                    ->url(fn (Donation $record): ?string => filled($record->proof_image) ? asset('storage/'.$record->proof_image) : null)
-                    ->openUrlInNewTab(),
+                    ->disabledClick(fn (?Donation $record): bool => ! ($record instanceof Donation) || blank($record->proof_image))
+                    ->action(
+                        Action::make('viewProof')
+                            ->label(__('filament.resources.donations.columns.view_proof'))
+                            ->link()
+                            ->icon('heroicon-o-photo')
+                            ->visible(fn (?Donation $record): bool => $record instanceof Donation && filled($record->proof_image))
+                            ->modalHeading(__('filament.resources.donations.columns.view_proof'))
+                            ->modalSubmitAction(false)
+                            ->modalCancelActionLabel(__('filament.common.close'))
+                            ->modalWidth(Width::FiveExtraLarge)
+                            ->modalContent(fn (Donation $record) => view('filament.resources.donations.modals.proof-image', [
+                                'proofImageUrl' => $record->resolveProofImageUrl(),
+                            ])),
+                    ),
                 TextColumn::make('amount')
                     ->label(__('filament.resources.donations.fields.amount'))
                     ->money('IDR')

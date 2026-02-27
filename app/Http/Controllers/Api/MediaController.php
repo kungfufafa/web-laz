@@ -17,8 +17,12 @@ class MediaController extends Controller
             abort(404);
         }
 
-        if (Storage::disk('public')->exists($normalized)) {
-            return Storage::disk('public')->response($normalized);
+        if (MediaUrl::isProtectedPath($normalized)) {
+            abort(404);
+        }
+
+        if (! MediaUrl::isWhitelistedLocalPath($normalized)) {
+            abort(404);
         }
 
         if (Storage::disk('local')->exists($normalized)) {

@@ -14,6 +14,7 @@ return [
         'yes' => 'Yes',
         'no' => 'No',
         'anonymous' => 'Anonymous',
+        'close' => 'Close',
     ],
 
     'options' => [
@@ -138,6 +139,7 @@ return [
             'columns' => [
                 'view_proof' => 'View Proof',
                 'no_proof' => 'No Proof Uploaded',
+                'proof_unavailable' => 'Transfer proof was not found or is not accessible.',
             ],
             'actions' => [
                 'approve' => 'Approve',

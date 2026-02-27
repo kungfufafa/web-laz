@@ -129,7 +129,10 @@ class DonationController extends Controller
         }
 
         $path = $request->hasFile('proof_image')
-            ? $request->file('proof_image')->store('proofs', 'public')
+            ? $request->file('proof_image')->store(
+                Donation::PROOF_IMAGE_DIRECTORY,
+                Donation::PROOF_IMAGE_DISK,
+            )
             : null;
 
         $donation = Donation::create([

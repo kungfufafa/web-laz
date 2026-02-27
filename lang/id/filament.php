@@ -14,6 +14,7 @@ return [
         'yes' => 'Ya',
         'no' => 'Tidak',
         'anonymous' => 'Anonim',
+        'close' => 'Tutup',
     ],
 
     'options' => [
@@ -138,6 +139,7 @@ return [
             'columns' => [
                 'view_proof' => 'Lihat Bukti',
                 'no_proof' => 'Belum Ada Bukti',
+                'proof_unavailable' => 'Bukti transfer tidak ditemukan atau tidak dapat diakses.',
             ],
             'actions' => [
                 'approve' => 'Setujui',

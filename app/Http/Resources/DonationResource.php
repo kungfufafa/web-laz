@@ -27,7 +27,7 @@ class DonationResource extends JsonResource
             'status' => $this->status,
             'payment_method_id' => $this->payment_method_id,
             'payment_method_name' => $this->paymentMethod->name ?? null,
-            'proof_image_url' => $this->proof_image ? \Illuminate\Support\Facades\Storage::url($this->proof_image) : null,
+            'proof_image_url' => $this->resource->resolveProofImageUrl(),
             'qris_payload' => $this->when(isset($this->qris_dynamic_payload), $this->qris_dynamic_payload),
             'donor_name' => $this->donor_name,
             'donor_phone' => $this->donor_phone,

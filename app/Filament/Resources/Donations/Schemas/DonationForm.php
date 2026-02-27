@@ -2,6 +2,7 @@
 
 namespace App\Filament\Resources\Donations\Schemas;
 
+use App\Models\Donation;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
@@ -90,6 +91,9 @@ class DonationForm
                             ->required(),
                         FileUpload::make('proof_image')
                             ->label(__('filament.resources.donations.fields.proof_image'))
+                            ->disk(Donation::PROOF_IMAGE_DISK)
+                            ->directory(Donation::PROOF_IMAGE_DIRECTORY)
+                            ->visibility('private')
                             ->image(),
                         Select::make('status')
                             ->label(__('filament.resources.donations.fields.status'))

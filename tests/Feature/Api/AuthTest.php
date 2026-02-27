@@ -58,17 +58,17 @@ test('authenticated user can get their profile', function () {
 });
 
 test('authenticated user profile resolves avatar url from local disk path', function () {
-    Storage::disk('local')->put('avatar-test.png', 'avatar-content');
+    Storage::disk('local')->put('avatars/avatar-test.png', 'avatar-content');
 
     $user = User::factory()->create([
-        'avatar_url' => 'avatar-test.png',
+        'avatar_url' => 'avatars/avatar-test.png',
     ]);
     $token = $user->createToken('auth_token')->plainTextToken;
 
     $response = getJson('/api/user', ['Authorization' => 'Bearer '.$token]);
 
     $response->assertStatus(200);
-    expect($response->json('avatar_url'))->toEndWith('/api/media/avatar-test.png');
+    expect($response->json('avatar_url'))->toEndWith('/api/media/avatars/avatar-test.png');
 });
 
 test('authenticated user can logout', function () {

@@ -81,17 +81,17 @@ test('article endpoint returns null thumbnail when file path does not exist', fu
 });
 
 test('article endpoint uses api media url when thumbnail exists in local disk', function () {
-    Storage::disk('local')->put('legacy-cover.jpg', 'legacy-cover-content');
+    Storage::disk('local')->put('articles/legacy-cover.jpg', 'legacy-cover-content');
 
     Article::factory()->create([
         'is_published' => true,
-        'thumbnail' => 'legacy-cover.jpg',
+        'thumbnail' => 'articles/legacy-cover.jpg',
     ]);
 
     $response = $this->getJson('/api/articles');
 
     $response->assertStatus(200);
-    expect($response->json('data.0.thumbnail'))->toEndWith('/api/media/legacy-cover.jpg');
+    expect($response->json('data.0.thumbnail'))->toEndWith('/api/media/articles/legacy-cover.jpg');
 });
 
 test('can list published videos', function () {
@@ -151,9 +151,39 @@ test('video endpoint returns null youtube urls when stored youtube id is invalid
 });
 
 test('media endpoint can serve file from local disk', function () {
+    Storage::disk('local')->put('avatars/legacy-image.jpg', 'legacy-image-content');
+
+    $response = $this->get('/api/media/avatars/legacy-image.jpg');
+
+    $response->assertOk();
+});
+
+test('media endpoint blocks non-whitelisted local paths', function () {
     Storage::disk('local')->put('legacy-image.jpg', 'legacy-image-content');
 
     $response = $this->get('/api/media/legacy-image.jpg');
 
-    $response->assertOk();
+    $response->assertNotFound();
+});
+
+test('media endpoint cannot expose donation proof files from local disk', function () {
+    Storage::disk('local')->put('proofs/private-transfer.jpg', 'sensitive-proof-content');
+
+    $response = $this->get('/api/media/proofs/private-transfer.jpg');
+
+    $response->assertNotFound();
+});
+
+test('content media resolver does not expose local donation proof paths', function () {
+    Storage::disk('local')->put('proofs/private-transfer.jpg', 'sensitive-proof-content');
+
+    Article::factory()->create([
+        'is_published' => true,
+        'thumbnail' => 'proofs/private-transfer.jpg',
+    ]);
+
+    $response = $this->getJson('/api/articles');
+
+    $response->assertStatus(200)
+        ->assertJsonPath('data.0.thumbnail', null);
 });
