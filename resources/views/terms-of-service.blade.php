@@ -142,7 +142,7 @@
                         </p>
                         <ul class="list-none text-zinc-600 dark:text-zinc-400 space-y-2 mt-4">
                             <li><strong>Email:</strong> info@lazalazhar5.com</li>
-                            <li><strong>WhatsApp:</strong> +62 812-3456-7890</li>
+                            <li><strong>WhatsApp:</strong> +62 838-3946-3566</li>
                         </ul>
                     </section>
                 </div>

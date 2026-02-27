@@ -29,7 +29,8 @@ class ArticleForm
                             ->afterStateUpdated(fn ($set, ?string $state) => $set('slug', Str::slug((string) $state))),
                         TextInput::make('slug')
                             ->placeholder('slug-artikel')
-                            ->required(),
+                            ->required()
+                            ->unique(ignoreRecord: true),
                         FileUpload::make('thumbnail')
                             ->label('Thumbnail')
                             ->image()

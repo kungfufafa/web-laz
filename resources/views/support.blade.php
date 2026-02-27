@@ -134,7 +134,7 @@
                                 <h3 class="font-semibold text-zinc-900 dark:text-zinc-100">WhatsApp</h3>
                             </div>
                             <p class="text-sm text-zinc-600 dark:text-zinc-400 mb-2">Chat langsung dengan tim support</p>
-                            <a href="https://wa.me/6281234567890" target="_blank" rel="noopener noreferrer" class="text-emerald-600 dark:text-emerald-400 font-medium hover:underline">+62 812-3456-7890</a>
+                            <a href="https://wa.me/6283839463566" target="_blank" rel="noopener noreferrer" class="text-emerald-600 dark:text-emerald-400 font-medium hover:underline">+62 838-3946-3566</a>
                         </div>
                     </div>
                 </section>

@@ -69,13 +69,16 @@ class UserForm
                             ->label('Email')
                             ->email()
                             ->placeholder('contoh@email.com')
-                            ->required(),
-                        TextInput::make('password')
-                            ->label('Password Awal')
-                            ->password()
-                            ->placeholder('Minimal 8 karakter')
                             ->required()
-                            ->visibleOn('create'),
+                            ->unique(ignoreRecord: true),
+                        TextInput::make('password')
+                            ->label('Password')
+                            ->password()
+                            ->placeholder('Kosongkan jika tidak diubah')
+                            ->minLength(8)
+                            ->required(fn (string $operation): bool => $operation === 'create')
+                            ->dehydrateStateUsing(fn (?string $state): ?string => filled($state) ? $state : null)
+                            ->dehydrated(fn (?string $state): bool => filled($state)),
                         Select::make('role')
                             ->label('Peran')
                             ->options(fn (): array => static::roleOptions())
@@ -89,7 +92,8 @@ class UserForm
                         TextInput::make('phone')
                             ->label('Nomor Telepon')
                             ->tel()
-                            ->placeholder('08xxxxxxxxxx'),
+                            ->placeholder('08xxxxxxxxxx')
+                            ->unique(ignoreRecord: true),
                         FileUpload::make('avatar_url')
                             ->label('Foto Profil')
                             ->image()
