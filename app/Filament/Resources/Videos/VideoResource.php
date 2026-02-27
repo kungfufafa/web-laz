@@ -12,19 +12,32 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use UnitEnum;
 
 class VideoResource extends Resource
 {
     protected static ?string $model = Video::class;
 
-    protected static ?string $modelLabel = 'Video Kajian';
-
-    protected static ?string $navigationLabel = 'Video Kajian';
-
-    protected static string|UnitEnum|null $navigationGroup = 'Konten';
-
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-video-camera';
+
+    public static function getModelLabel(): string
+    {
+        return __('filament.resources.videos.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.resources.videos.plural_model_label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.resources.videos.navigation_label');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.navigation.groups.content');
+    }
 
     public static function form(Schema $schema): Schema
     {

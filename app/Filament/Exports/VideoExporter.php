@@ -17,19 +17,19 @@ class VideoExporter extends Exporter
     {
         return [
             ExportColumn::make('id')
-                ->label('ID'),
+                ->label(__('filament.exports.videos.columns.id')),
             ExportColumn::make('title')
-                ->label('Judul'),
+                ->label(__('filament.exports.videos.columns.title')),
             ExportColumn::make('youtube_id')
-                ->label('YouTube ID'),
+                ->label(__('filament.exports.videos.columns.youtube_id')),
             ExportColumn::make('description')
-                ->label('Deskripsi')
+                ->label(__('filament.exports.videos.columns.description'))
                 ->enabledByDefault(false),
             ExportColumn::make('is_published')
-                ->label('Terbit')
-                ->formatStateUsing(fn (?bool $state): string => $state ? 'Ya' : 'Tidak'),
+                ->label(__('filament.exports.videos.columns.is_published'))
+                ->formatStateUsing(fn (?bool $state): string => $state ? __('filament.common.yes') : __('filament.common.no')),
             ExportColumn::make('created_at')
-                ->label('Tanggal Dibuat'),
+                ->label(__('filament.exports.videos.columns.created_at')),
         ];
     }
 

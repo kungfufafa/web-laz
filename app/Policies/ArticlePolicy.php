@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
-use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\Article;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Foundation\Auth\User as AuthUser;
 
 class ArticlePolicy
 {
     use HandlesAuthorization;
-    
+
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:Article');
@@ -30,6 +30,11 @@ class ArticlePolicy
     public function update(AuthUser $authUser, Article $article): bool
     {
         return $authUser->can('Update:Article');
+    }
+
+    public function export(AuthUser $authUser): bool
+    {
+        return $authUser->can('Export:Article');
     }
 
     public function delete(AuthUser $authUser, Article $article): bool
@@ -66,5 +71,4 @@ class ArticlePolicy
     {
         return $authUser->can('Reorder:Article');
     }
-
 }

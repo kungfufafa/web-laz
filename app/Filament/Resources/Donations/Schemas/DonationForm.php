@@ -16,46 +16,46 @@ class DonationForm
         return $schema
             ->columns(1)
             ->components([
-                Section::make('Data Donatur')
-                    ->description('Isi data donatur terdaftar atau tamu (guest).')
+                Section::make(__('filament.resources.donations.sections.donor_data'))
+                    ->description(__('filament.resources.donations.descriptions.donor_data'))
                     ->columns(2)
                     ->components([
                         Select::make('user_id')
-                            ->label('Pengguna Terdaftar')
+                            ->label(__('filament.resources.donations.fields.registered_user'))
                             ->relationship('user', 'name')
                             ->searchable()
                             ->preload(),
                         TextInput::make('guest_token')
-                            ->label('Guest Token')
+                            ->label(__('filament.resources.donations.fields.guest_token'))
                             ->maxLength(120)
-                            ->placeholder('Token donatur tamu'),
+                            ->placeholder(__('filament.resources.donations.placeholders.guest_token')),
                         TextInput::make('donor_name')
-                            ->label('Nama Donatur')
+                            ->label(__('filament.resources.donations.fields.donor_name'))
                             ->maxLength(120),
                         TextInput::make('donor_phone')
-                            ->label('No. Telepon Donatur')
+                            ->label(__('filament.resources.donations.fields.donor_phone'))
                             ->maxLength(30),
                         TextInput::make('donor_email')
-                            ->label('Email Donatur')
+                            ->label(__('filament.resources.donations.fields.donor_email'))
                             ->email()
                             ->maxLength(120),
                     ]),
-                Section::make('Detail Transaksi')
-                    ->description('Informasi pokok transaksi donasi dan verifikasinya.')
+                Section::make(__('filament.resources.donations.sections.transaction_details'))
+                    ->description(__('filament.resources.donations.descriptions.transaction_details'))
                     ->columns(2)
                     ->components([
                         Select::make('payment_method_id')
-                            ->label('Metode Pembayaran')
+                            ->label(__('filament.resources.donations.fields.payment_method'))
                             ->relationship('paymentMethod', 'name')
                             ->searchable()
                             ->preload()
                             ->required(),
                         Select::make('category')
-                            ->label('Kategori')
+                            ->label(__('filament.resources.donations.fields.category'))
                             ->options([
-                                'zakat' => 'Zakat',
-                                'infak' => 'Infak',
-                                'sedekah' => 'Sedekah',
+                                'zakat' => __('filament.options.donation_category.zakat'),
+                                'infak' => __('filament.options.donation_category.infak'),
+                                'sedekah' => __('filament.options.donation_category.sedekah'),
                             ])
                             ->required()
                             ->default('infak')
@@ -64,64 +64,64 @@ class DonationForm
                                 $set('payment_type', null);
                             }),
                         Select::make('payment_type')
-                            ->label('Jenis Donasi')
+                            ->label(__('filament.resources.donations.fields.payment_type'))
                             ->options(fn ($get): array => match ($get('category')) {
                                 'zakat' => [
-                                    'maal' => 'Zakat Maal',
-                                    'fitrah' => 'Zakat Fitrah',
-                                    'profesi' => 'Zakat Profesi',
+                                    'maal' => __('filament.options.donation_payment_type.maal'),
+                                    'fitrah' => __('filament.options.donation_payment_type.fitrah'),
+                                    'profesi' => __('filament.options.donation_payment_type.profesi'),
                                 ],
                                 'infak' => [
-                                    'kemanusiaan' => 'Infak Kemanusiaan',
-                                    'umum' => 'Infak Umum',
+                                    'kemanusiaan' => __('filament.options.donation_payment_type.kemanusiaan'),
+                                    'umum' => __('filament.options.donation_payment_type.infak_umum'),
                                 ],
                                 'sedekah' => [
-                                    'jariyah' => 'Sedekah Jariyah',
-                                    'umum' => 'Sedekah Umum',
+                                    'jariyah' => __('filament.options.donation_payment_type.jariyah'),
+                                    'umum' => __('filament.options.donation_payment_type.sedekah_umum'),
                                 ],
                                 default => [],
                             })
-                            ->placeholder('Pilih jenis donasi')
+                            ->placeholder(__('filament.resources.donations.placeholders.payment_type'))
                             ->required(),
                         TextInput::make('amount')
-                            ->label('Nominal')
+                            ->label(__('filament.resources.donations.fields.amount'))
                             ->numeric()
                             ->prefix('Rp')
                             ->required(),
                         FileUpload::make('proof_image')
-                            ->label('Bukti Transfer')
+                            ->label(__('filament.resources.donations.fields.proof_image'))
                             ->image(),
                         Select::make('status')
-                            ->label('Status')
+                            ->label(__('filament.resources.donations.fields.status'))
                             ->options([
-                                'pending' => 'Pending',
-                                'verified' => 'Verified',
-                                'rejected' => 'Rejected',
+                                'pending' => __('filament.options.donation_status.pending'),
+                                'verified' => __('filament.options.donation_status.verified'),
+                                'rejected' => __('filament.options.donation_status.rejected'),
                             ])
                             ->required()
                             ->default('pending'),
                     ]),
-                Section::make('Konteks Program & Kalkulator')
-                    ->description('Dipakai untuk donasi infak/sedekah kontekstual dan detail kalkulator zakat.')
+                Section::make(__('filament.resources.donations.sections.program_context'))
+                    ->description(__('filament.resources.donations.descriptions.program_context'))
                     ->columns(2)
                     ->components([
                         TextInput::make('context_label')
-                            ->label('Konteks Donasi')
+                            ->label(__('filament.resources.donations.fields.context_label'))
                             ->maxLength(120),
                         TextInput::make('context_slug')
-                            ->label('Slug Konteks')
+                            ->label(__('filament.resources.donations.fields.context_slug'))
                             ->maxLength(120),
                         TextInput::make('calculator_type')
-                            ->label('Tipe Kalkulator')
+                            ->label(__('filament.resources.donations.fields.calculator_type'))
                             ->maxLength(50),
                         Textarea::make('intention_note')
-                            ->label('Catatan Niat')
+                            ->label(__('filament.resources.donations.fields.intention_note'))
                             ->maxLength(255)
                             ->rows(2)
                             ->columnSpanFull(),
                         Textarea::make('calculator_breakdown')
-                            ->label('Breakdown Kalkulator (JSON)')
-                            ->helperText('Isi dengan format JSON valid. Contoh: {"nisab": 123, "wajib": true}')
+                            ->label(__('filament.resources.donations.fields.calculator_breakdown'))
+                            ->helperText(__('filament.resources.donations.helper_text.calculator_breakdown'))
                             ->rule('json')
                             ->rows(6)
                             ->columnSpanFull()
@@ -138,10 +138,10 @@ class DonationForm
                                 return is_array($decoded) ? $decoded : null;
                             }),
                     ]),
-                Section::make('Catatan Admin')
+                Section::make(__('filament.resources.donations.sections.admin_notes'))
                     ->components([
                         Textarea::make('admin_note')
-                            ->label('Catatan Internal')
+                            ->label(__('filament.resources.donations.fields.admin_note'))
                             ->rows(4)
                             ->columnSpanFull(),
                     ]),

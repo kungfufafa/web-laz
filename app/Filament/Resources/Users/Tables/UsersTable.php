@@ -23,8 +23,8 @@ class UsersTable
 
         if (! is_string($rolesTable) || ! SchemaFacade::hasTable($rolesTable)) {
             return [
-                'admin' => 'Admin',
-                'member' => 'Member',
+                'admin' => __('filament.options.role.admin'),
+                'member' => __('filament.options.role.member'),
             ];
         }
 
@@ -35,8 +35,8 @@ class UsersTable
 
         if ($roles === []) {
             return [
-                'admin' => 'Admin',
-                'member' => 'Member',
+                'admin' => __('filament.options.role.admin'),
+                'member' => __('filament.options.role.member'),
             ];
         }
 
@@ -47,7 +47,11 @@ class UsersTable
                 continue;
             }
 
-            $formattedRoles[$roleValue] = Str::of($roleName)->replace('_', ' ')->headline()->toString();
+            $translatedRole = __('filament.options.role.'.$roleValue);
+
+            $formattedRoles[$roleValue] = str_starts_with($translatedRole, 'filament.options.role.')
+                ? Str::of($roleName)->replace('_', ' ')->headline()->toString()
+                : $translatedRole;
         }
 
         return $formattedRoles;
@@ -58,12 +62,19 @@ class UsersTable
         return $table
             ->columns([
                 TextColumn::make('name')
+                    ->label(__('filament.resources.users.fields.name'))
                     ->searchable(),
                 TextColumn::make('email')
-                    ->label('Email address')
+                    ->label(__('filament.resources.users.fields.email'))
                     ->searchable(),
                 TextColumn::make('role')
+                    ->label(__('filament.resources.users.fields.role'))
                     ->badge()
+                    ->formatStateUsing(function (string $state): string {
+                        $options = static::roleOptions();
+
+                        return $options[$state] ?? Str::of($state)->replace('_', ' ')->headline()->toString();
+                    })
                     ->color(fn (string $state): string => match ($state) {
                         'admin' => 'success',
                         'member' => 'info',
@@ -71,11 +82,12 @@ class UsersTable
                     })
                     ->searchable(),
                 TextColumn::make('phone')
+                    ->label(__('filament.resources.users.fields.phone'))
                     ->searchable(),
             ])
             ->filters([
                 SelectFilter::make('role')
-                    ->label('Role')
+                    ->label(__('filament.resources.users.filters.role'))
                     ->options(fn (): array => static::roleOptions()),
             ])
             ->recordActions([

@@ -17,33 +17,34 @@ class ArticleForm
         return $schema
             ->columns(1)
             ->components([
-                Section::make('Informasi Artikel')
-                    ->description('Metadata artikel untuk URL dan tampilan list konten.')
+                Section::make(__('filament.resources.articles.sections.information'))
+                    ->description(__('filament.resources.articles.descriptions.information'))
                     ->columns(2)
                     ->components([
                         TextInput::make('title')
-                            ->label('Judul')
-                            ->placeholder('Masukkan judul artikel')
+                            ->label(__('filament.resources.articles.fields.title'))
+                            ->placeholder(__('filament.resources.articles.placeholders.title'))
                             ->required()
                             ->live(onBlur: true)
                             ->afterStateUpdated(fn ($set, ?string $state) => $set('slug', Str::slug((string) $state))),
                         TextInput::make('slug')
-                            ->placeholder('slug-artikel')
+                            ->label(__('filament.resources.articles.fields.slug'))
+                            ->placeholder(__('filament.resources.articles.placeholders.slug'))
                             ->required()
                             ->unique(ignoreRecord: true),
                         FileUpload::make('thumbnail')
-                            ->label('Thumbnail')
+                            ->label(__('filament.resources.articles.fields.thumbnail'))
                             ->image()
                             ->disk('public')
                             ->directory('articles'),
                         Toggle::make('is_published')
-                            ->label('Publikasikan Artikel')
+                            ->label(__('filament.resources.articles.fields.is_published'))
                             ->required(),
                     ]),
-                Section::make('Isi Artikel')
+                Section::make(__('filament.resources.articles.sections.content'))
                     ->components([
                         RichEditor::make('content')
-                            ->label('Konten')
+                            ->label(__('filament.resources.articles.fields.content'))
                             ->required()
                             ->columnSpanFull(),
                     ]),

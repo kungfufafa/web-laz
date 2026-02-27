@@ -17,32 +17,32 @@ class DonationExporter extends Exporter
     {
         return [
             ExportColumn::make('uuid')
-                ->label('ID Donasi'),
+                ->label(__('filament.exports.donations.columns.id')),
             ExportColumn::make('user.name')
-                ->label('Member'),
+                ->label(__('filament.exports.donations.columns.member')),
             ExportColumn::make('donor_name')
-                ->label('Nama Donatur'),
+                ->label(__('filament.exports.donations.columns.donor_name')),
             ExportColumn::make('donor_phone')
-                ->label('No. HP Donatur'),
+                ->label(__('filament.exports.donations.columns.donor_phone')),
             ExportColumn::make('donor_email')
-                ->label('Email Donatur'),
+                ->label(__('filament.exports.donations.columns.donor_email')),
             ExportColumn::make('category')
-                ->label('Kategori'),
+                ->label(__('filament.exports.donations.columns.category')),
             ExportColumn::make('payment_type')
-                ->label('Jenis Donasi'),
+                ->label(__('filament.exports.donations.columns.payment_type')),
             ExportColumn::make('context_label')
-                ->label('Program'),
+                ->label(__('filament.exports.donations.columns.program')),
             ExportColumn::make('paymentMethod.name')
-                ->label('Metode Pembayaran'),
+                ->label(__('filament.exports.donations.columns.payment_method')),
             ExportColumn::make('amount')
-                ->label('Jumlah'),
+                ->label(__('filament.exports.donations.columns.amount')),
             ExportColumn::make('status')
-                ->label('Status'),
+                ->label(__('filament.exports.donations.columns.status')),
             ExportColumn::make('admin_note')
-                ->label('Catatan Admin')
+                ->label(__('filament.exports.donations.columns.admin_note'))
                 ->enabledByDefault(false),
             ExportColumn::make('created_at')
-                ->label('Tanggal Donasi'),
+                ->label(__('filament.exports.donations.columns.created_at')),
         ];
     }
 

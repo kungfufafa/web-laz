@@ -4,9 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Filament\Widgets\Concerns\HasShieldWidgetPermission;
 use App\Models\Article;
-use App\Models\Donation;
 use App\Models\MemberPrayer;
-use App\Models\PaymentMethod;
 use App\Models\User;
 use App\Models\Video;
 use Filament\Widgets\StatsOverviewWidget as BaseWidget;
@@ -21,23 +19,23 @@ class ContentStatsWidget extends BaseWidget
     protected function getStats(): array
     {
         return [
-            Stat::make('Total Member', User::where('role', 'member')->count())
-                ->description('Member terdaftar')
+            Stat::make(__('filament.widgets.content_stats.total_members'), User::where('role', 'member')->count())
+                ->description(__('filament.widgets.content_stats.registered_members'))
                 ->descriptionIcon('heroicon-m-users')
                 ->color('primary'),
 
-            Stat::make('Artikel', Article::count())
-                ->description(Article::where('is_published', true)->count() . ' dipublikasi')
+            Stat::make(__('filament.widgets.content_stats.articles'), Article::count())
+                ->description(__('filament.widgets.content_stats.published_count', ['count' => Article::where('is_published', true)->count()]))
                 ->descriptionIcon('heroicon-m-document-text')
                 ->color('info'),
 
-            Stat::make('Video', Video::count())
-                ->description(Video::where('is_published', true)->count() . ' dipublikasi')
+            Stat::make(__('filament.widgets.content_stats.videos'), Video::count())
+                ->description(__('filament.widgets.content_stats.published_count', ['count' => Video::where('is_published', true)->count()]))
                 ->descriptionIcon('heroicon-m-play-circle')
                 ->color('success'),
 
-            Stat::make('Doa Member', MemberPrayer::count())
-                ->description(MemberPrayer::where('status', 'published')->count() . ' dipublikasi')
+            Stat::make(__('filament.widgets.content_stats.member_prayers'), MemberPrayer::count())
+                ->description(__('filament.widgets.content_stats.published_count', ['count' => MemberPrayer::where('status', 'published')->count()]))
                 ->descriptionIcon('heroicon-m-heart')
                 ->color('danger'),
         ];

@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
-use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\MemberPrayer;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Foundation\Auth\User as AuthUser;
 
 class MemberPrayerPolicy
 {
     use HandlesAuthorization;
-    
+
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:MemberPrayer');
@@ -30,6 +30,11 @@ class MemberPrayerPolicy
     public function update(AuthUser $authUser, MemberPrayer $memberPrayer): bool
     {
         return $authUser->can('Update:MemberPrayer');
+    }
+
+    public function export(AuthUser $authUser): bool
+    {
+        return $authUser->can('Export:MemberPrayer');
     }
 
     public function delete(AuthUser $authUser, MemberPrayer $memberPrayer): bool
@@ -66,5 +71,4 @@ class MemberPrayerPolicy
     {
         return $authUser->can('Reorder:MemberPrayer');
     }
-
 }

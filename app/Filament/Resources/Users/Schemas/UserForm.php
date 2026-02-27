@@ -22,8 +22,8 @@ class UserForm
 
         if (! is_string($rolesTable) || ! SchemaFacade::hasTable($rolesTable)) {
             return [
-                'admin' => 'Admin',
-                'member' => 'Member',
+                'admin' => __('filament.options.role.admin'),
+                'member' => __('filament.options.role.member'),
             ];
         }
 
@@ -34,8 +34,8 @@ class UserForm
 
         if ($roles === []) {
             return [
-                'admin' => 'Admin',
-                'member' => 'Member',
+                'admin' => __('filament.options.role.admin'),
+                'member' => __('filament.options.role.member'),
             ];
         }
 
@@ -46,7 +46,11 @@ class UserForm
                 continue;
             }
 
-            $formattedRoles[$roleValue] = Str::of($roleName)->replace('_', ' ')->headline()->toString();
+            $translatedRole = __('filament.options.role.'.$roleValue);
+
+            $formattedRoles[$roleValue] = str_starts_with($translatedRole, 'filament.options.role.')
+                ? Str::of($roleName)->replace('_', ' ')->headline()->toString()
+                : $translatedRole;
         }
 
         return $formattedRoles;
@@ -57,45 +61,45 @@ class UserForm
         return $schema
             ->columns(1)
             ->components([
-                Section::make('Informasi Akun')
-                    ->description('Data utama akun pengguna untuk autentikasi dan otorisasi.')
+                Section::make(__('filament.resources.users.sections.account_information'))
+                    ->description(__('filament.resources.users.descriptions.account_information'))
                     ->columns(2)
                     ->components([
                         TextInput::make('name')
-                            ->label('Nama Lengkap')
-                            ->placeholder('Contoh: Ahmad Fauzi')
+                            ->label(__('filament.resources.users.fields.name'))
+                            ->placeholder(__('filament.resources.users.placeholders.name'))
                             ->required(),
                         TextInput::make('email')
-                            ->label('Email')
+                            ->label(__('filament.resources.users.fields.email'))
                             ->email()
-                            ->placeholder('contoh@email.com')
+                            ->placeholder(__('filament.resources.users.placeholders.email'))
                             ->required()
                             ->unique(ignoreRecord: true),
                         TextInput::make('password')
-                            ->label('Password')
+                            ->label(__('filament.resources.users.fields.password'))
                             ->password()
-                            ->placeholder('Kosongkan jika tidak diubah')
+                            ->placeholder(__('filament.resources.users.placeholders.password'))
                             ->minLength(8)
                             ->required(fn (string $operation): bool => $operation === 'create')
                             ->dehydrateStateUsing(fn (?string $state): ?string => filled($state) ? $state : null)
                             ->dehydrated(fn (?string $state): bool => filled($state)),
                         Select::make('role')
-                            ->label('Peran')
+                            ->label(__('filament.resources.users.fields.role'))
                             ->options(fn (): array => static::roleOptions())
                             ->required()
                             ->default('member'),
                     ]),
-                Section::make('Profil')
-                    ->description('Informasi tambahan yang ditampilkan di aplikasi.')
+                Section::make(__('filament.resources.users.sections.profile'))
+                    ->description(__('filament.resources.users.descriptions.profile'))
                     ->columns(2)
                     ->components([
                         TextInput::make('phone')
-                            ->label('Nomor Telepon')
+                            ->label(__('filament.resources.users.fields.phone'))
                             ->tel()
-                            ->placeholder('08xxxxxxxxxx')
+                            ->placeholder(__('filament.resources.users.placeholders.phone'))
                             ->unique(ignoreRecord: true),
                         FileUpload::make('avatar_url')
-                            ->label('Foto Profil')
+                            ->label(__('filament.resources.users.fields.avatar'))
                             ->image()
                             ->avatar()
                             ->disk('public')

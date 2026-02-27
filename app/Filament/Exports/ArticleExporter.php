@@ -17,20 +17,20 @@ class ArticleExporter extends Exporter
     {
         return [
             ExportColumn::make('id')
-                ->label('ID'),
+                ->label(__('filament.exports.articles.columns.id')),
             ExportColumn::make('title')
-                ->label('Judul'),
+                ->label(__('filament.exports.articles.columns.title')),
             ExportColumn::make('slug')
-                ->label('Slug'),
+                ->label(__('filament.exports.articles.columns.slug')),
             ExportColumn::make('is_published')
-                ->label('Terbit')
-                ->formatStateUsing(fn (?bool $state): string => $state ? 'Ya' : 'Tidak'),
+                ->label(__('filament.exports.articles.columns.is_published'))
+                ->formatStateUsing(fn (?bool $state): string => $state ? __('filament.common.yes') : __('filament.common.no')),
             ExportColumn::make('published_at')
-                ->label('Tanggal Terbit'),
+                ->label(__('filament.exports.articles.columns.published_at')),
             ExportColumn::make('created_at')
-                ->label('Tanggal Dibuat'),
+                ->label(__('filament.exports.articles.columns.created_at')),
             ExportColumn::make('content')
-                ->label('Konten')
+                ->label(__('filament.exports.articles.columns.content'))
                 ->enabledByDefault(false),
         ];
     }

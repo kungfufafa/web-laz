@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
-use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\PaymentMethod;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Foundation\Auth\User as AuthUser;
 
 class PaymentMethodPolicy
 {
     use HandlesAuthorization;
-    
+
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:PaymentMethod');
@@ -30,6 +30,11 @@ class PaymentMethodPolicy
     public function update(AuthUser $authUser, PaymentMethod $paymentMethod): bool
     {
         return $authUser->can('Update:PaymentMethod');
+    }
+
+    public function export(AuthUser $authUser): bool
+    {
+        return $authUser->can('Export:PaymentMethod');
     }
 
     public function delete(AuthUser $authUser, PaymentMethod $paymentMethod): bool
@@ -66,5 +71,4 @@ class PaymentMethodPolicy
     {
         return $authUser->can('Reorder:PaymentMethod');
     }
-
 }

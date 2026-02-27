@@ -12,19 +12,32 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use UnitEnum;
 
 class MemberPrayerResource extends Resource
 {
     protected static ?string $model = MemberPrayer::class;
 
-    protected static ?string $modelLabel = 'Doa Anggota';
-
-    protected static ?string $navigationLabel = 'Doa Anggota';
-
-    protected static string|UnitEnum|null $navigationGroup = 'Konten';
-
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-hand-raised';
+
+    public static function getModelLabel(): string
+    {
+        return __('filament.resources.member_prayers.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.resources.member_prayers.plural_model_label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.resources.member_prayers.navigation_label');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.navigation.groups.content');
+    }
 
     public static function form(Schema $schema): Schema
     {

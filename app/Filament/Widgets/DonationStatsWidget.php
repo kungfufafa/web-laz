@@ -21,23 +21,23 @@ class DonationStatsWidget extends BaseWidget
         $todayDonations = Donation::whereDate('created_at', today())->sum('amount');
 
         return [
-            Stat::make('Total Donasi', 'Rp ' . number_format($totalDonations, 0, ',', '.'))
-                ->description('Total donasi terkumpul')
+            Stat::make(__('filament.widgets.donation_stats.total_donations'), 'Rp '.number_format($totalDonations, 0, ',', '.'))
+                ->description(__('filament.widgets.donation_stats.total_donations_description'))
                 ->descriptionIcon('heroicon-m-arrow-trending-up')
                 ->color('success'),
 
-            Stat::make('Donasi Hari Ini', 'Rp ' . number_format($todayDonations, 0, ',', '.'))
-                ->description('Donasi masuk hari ini')
+            Stat::make(__('filament.widgets.donation_stats.today_donations'), 'Rp '.number_format($todayDonations, 0, ',', '.'))
+                ->description(__('filament.widgets.donation_stats.today_donations_description'))
                 ->descriptionIcon('heroicon-m-calendar')
                 ->color('info'),
 
-            Stat::make('Menunggu Konfirmasi', $pendingDonations)
-                ->description('Donasi pending')
+            Stat::make(__('filament.widgets.donation_stats.pending_confirmation'), $pendingDonations)
+                ->description(__('filament.widgets.donation_stats.pending_confirmation_description'))
                 ->descriptionIcon('heroicon-m-clock')
                 ->color('warning'),
 
-            Stat::make('Terkonfirmasi', $confirmedDonations)
-                ->description('Donasi terverifikasi')
+            Stat::make(__('filament.widgets.donation_stats.confirmed'), $confirmedDonations)
+                ->description(__('filament.widgets.donation_stats.confirmed_description'))
                 ->descriptionIcon('heroicon-m-check-circle')
                 ->color('success'),
         ];

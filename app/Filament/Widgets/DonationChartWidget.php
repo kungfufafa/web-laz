@@ -12,11 +12,11 @@ class DonationChartWidget extends ChartWidget
 
     protected static ?int $sort = 4;
 
-    protected int | string | array $columnSpan = 'full';
+    protected int|string|array $columnSpan = 'full';
 
     public function getHeading(): ?string
     {
-        return 'Tren Donasi (7 Hari Terakhir)';
+        return __('filament.widgets.donation_chart.heading');
     }
 
     protected function getData(): array
@@ -29,7 +29,7 @@ class DonationChartWidget extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Total Donasi (Rp)',
+                    'label' => __('filament.widgets.donation_chart.total_label'),
                     'data' => $data->toArray(),
                     'borderColor' => 'rgb(251, 191, 36)',
                     'backgroundColor' => 'rgba(251, 191, 36, 0.1)',
@@ -37,7 +37,7 @@ class DonationChartWidget extends ChartWidget
                 ],
             ],
             'labels' => collect(range(6, 0))->map(function ($daysAgo) {
-                return today()->subDays($daysAgo)->format('d M');
+                return today()->subDays($daysAgo)->translatedFormat('d M');
             })->toArray(),
         ];
     }

@@ -17,21 +17,21 @@ class VideoForm
         return $schema
             ->columns(1)
             ->components([
-                Section::make('Sumber YouTube')
-                    ->description('Tempel link video untuk mengisi metadata otomatis.')
+                Section::make(__('filament.resources.videos.sections.youtube_source'))
+                    ->description(__('filament.resources.videos.descriptions.youtube_source'))
                     ->columns(2)
                     ->components([
                         TextInput::make('youtube_id')
-                            ->label('Link YouTube')
-                            ->placeholder('https://www.youtube.com/watch?v=dQw4w9WgXcQ')
-                            ->helperText('Judul, deskripsi, dan thumbnail akan terisi otomatis saat field ini selesai diinput.')
+                            ->label(__('filament.resources.videos.fields.youtube_link'))
+                            ->placeholder(__('filament.resources.videos.placeholders.youtube_link'))
+                            ->helperText(__('filament.resources.videos.helper_text.youtube_link'))
                             ->required()
                             ->rule(static function (): \Closure {
                                 return static function (string $attribute, mixed $value, \Closure $fail): void {
                                     $input = is_scalar($value) ? trim((string) $value) : '';
 
                                     if (YouTube::extractVideoId($input) === null) {
-                                        $fail('Link YouTube tidak valid.');
+                                        $fail(__('filament.notifications.invalid_youtube_link'));
                                     }
                                 };
                             })
@@ -62,26 +62,26 @@ class VideoForm
                             })
                             ->dehydrateStateUsing(fn (?string $state): ?string => YouTube::extractVideoId($state)),
                         TextInput::make('title')
-                            ->label('Judul Video')
-                            ->placeholder('Judul konten video')
+                            ->label(__('filament.resources.videos.fields.title'))
+                            ->placeholder(__('filament.resources.videos.placeholders.title'))
                             ->required()
                             ->columnSpanFull(),
                         TextInput::make('thumbnail')
-                            ->label('Thumbnail URL')
+                            ->label(__('filament.resources.videos.fields.thumbnail_url'))
                             ->url()
-                            ->placeholder('https://...')
-                            ->helperText('Bisa otomatis dari YouTube, atau isi manual.')
+                            ->placeholder(__('filament.resources.videos.placeholders.thumbnail_url'))
+                            ->helperText(__('filament.resources.videos.helper_text.thumbnail_url'))
                             ->columnSpanFull(),
                     ]),
-                Section::make('Konten & Publikasi')
+                Section::make(__('filament.resources.videos.sections.content_and_publication'))
                     ->columns(2)
                     ->components([
                         Textarea::make('description')
-                            ->label('Deskripsi')
+                            ->label(__('filament.resources.videos.fields.description'))
                             ->rows(6)
                             ->columnSpanFull(),
                         Toggle::make('is_published')
-                            ->label('Tampilkan di Aplikasi')
+                            ->label(__('filament.resources.videos.fields.is_published'))
                             ->required(),
                     ]),
             ]);

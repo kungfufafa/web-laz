@@ -4,14 +4,14 @@ declare(strict_types=1);
 
 namespace App\Policies;
 
-use Illuminate\Foundation\Auth\User as AuthUser;
 use App\Models\Video;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Foundation\Auth\User as AuthUser;
 
 class VideoPolicy
 {
     use HandlesAuthorization;
-    
+
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:Video');
@@ -30,6 +30,11 @@ class VideoPolicy
     public function update(AuthUser $authUser, Video $video): bool
     {
         return $authUser->can('Update:Video');
+    }
+
+    public function export(AuthUser $authUser): bool
+    {
+        return $authUser->can('Export:Video');
     }
 
     public function delete(AuthUser $authUser, Video $video): bool
@@ -66,5 +71,4 @@ class VideoPolicy
     {
         return $authUser->can('Reorder:Video');
     }
-
 }

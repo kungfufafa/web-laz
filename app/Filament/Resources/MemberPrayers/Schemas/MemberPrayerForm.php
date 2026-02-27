@@ -15,29 +15,29 @@ class MemberPrayerForm
         return $schema
             ->columns(1)
             ->components([
-                Section::make('Doa Anggota')
-                    ->description('Kelola konten doa serta visibilitasnya di aplikasi.')
+                Section::make(__('filament.resources.member_prayers.sections.main'))
+                    ->description(__('filament.resources.member_prayers.descriptions.main'))
                     ->columns(2)
                     ->components([
                         Select::make('user_id')
-                            ->label('Pengguna')
+                            ->label(__('filament.resources.member_prayers.fields.user'))
                             ->relationship('user', 'name')
                             ->searchable()
                             ->preload()
                             ->required(),
                         Select::make('status')
-                            ->label('Status Tampil')
+                            ->label(__('filament.resources.member_prayers.fields.visibility_status'))
                             ->options([
-                                'published' => 'Published',
-                                'hidden' => 'Hidden',
+                                'published' => __('filament.options.member_prayer_status.published'),
+                                'hidden' => __('filament.options.member_prayer_status.hidden'),
                             ])
                             ->required()
                             ->default('published'),
                         Toggle::make('is_anonymous')
-                            ->label('Tampilkan sebagai anonim')
+                            ->label(__('filament.resources.member_prayers.fields.is_anonymous'))
                             ->required(),
                         Textarea::make('content')
-                            ->label('Isi Doa')
+                            ->label(__('filament.resources.member_prayers.fields.content'))
                             ->required()
                             ->rows(5)
                             ->columnSpanFull(),

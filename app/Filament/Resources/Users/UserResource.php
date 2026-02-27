@@ -12,21 +12,32 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use UnitEnum;
 
 class UserResource extends Resource
 {
     protected static ?string $model = User::class;
 
-    protected static ?string $modelLabel = 'Anggota';
-
-    protected static ?string $pluralModelLabel = 'Anggota';
-
-    protected static ?string $navigationLabel = 'Anggota';
-
-    protected static string|UnitEnum|null $navigationGroup = 'Pengguna';
-
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-users';
+
+    public static function getModelLabel(): string
+    {
+        return __('filament.resources.users.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.resources.users.plural_model_label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.resources.users.navigation_label');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.navigation.groups.users');
+    }
 
     public static function form(Schema $schema): Schema
     {

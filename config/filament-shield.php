@@ -172,6 +172,25 @@ return [
                 'update',
                 'delete',
             ],
+            \App\Filament\Resources\Donations\DonationResource::class => [
+                'approveReject',
+                'export',
+            ],
+            \App\Filament\Resources\Articles\ArticleResource::class => [
+                'export',
+            ],
+            \App\Filament\Resources\MemberPrayers\MemberPrayerResource::class => [
+                'export',
+            ],
+            \App\Filament\Resources\PaymentMethods\PaymentMethodResource::class => [
+                'export',
+            ],
+            \App\Filament\Resources\Users\UserResource::class => [
+                'export',
+            ],
+            \App\Filament\Resources\Videos\VideoResource::class => [
+                'export',
+            ],
         ],
         'exclude' => [
             //

@@ -12,19 +12,32 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use UnitEnum;
 
 class PaymentMethodResource extends Resource
 {
     protected static ?string $model = PaymentMethod::class;
 
-    protected static ?string $modelLabel = 'Metode Pembayaran';
-
-    protected static ?string $navigationLabel = 'Metode Pembayaran';
-
-    protected static string|UnitEnum|null $navigationGroup = 'Keuangan';
-
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-credit-card';
+
+    public static function getModelLabel(): string
+    {
+        return __('filament.resources.payment_methods.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.resources.payment_methods.plural_model_label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.resources.payment_methods.navigation_label');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.navigation.groups.finance');
+    }
 
     public static function form(Schema $schema): Schema
     {

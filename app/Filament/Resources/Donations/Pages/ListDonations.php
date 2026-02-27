@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Donations\Pages;
 
 use App\Filament\Exports\DonationExporter;
 use App\Filament\Resources\Donations\DonationResource;
+use App\Models\Donation;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
@@ -18,6 +19,7 @@ class ListDonations extends ListRecords
         return [
             CreateAction::make(),
             ExportAction::make()
+                ->authorize(fn (): bool => auth()->user()?->can('export', Donation::class) ?? false)
                 ->exporter(DonationExporter::class)
                 ->formats([ExportFormat::Csv, ExportFormat::Xlsx]),
         ];

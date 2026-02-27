@@ -21,47 +21,47 @@ class PaymentMethodForm
         return $schema
             ->columns(1)
             ->components([
-                Section::make('Informasi Metode Pembayaran')
-                    ->description('Data utama metode pembayaran yang tampil di aplikasi.')
+                Section::make(__('filament.resources.payment_methods.sections.information'))
+                    ->description(__('filament.resources.payment_methods.descriptions.information'))
                     ->columns(2)
                     ->components([
                         TextInput::make('name')
-                            ->label('Nama Metode')
-                            ->placeholder('Contoh: Bank BSI / QRIS')
+                            ->label(__('filament.resources.payment_methods.fields.name'))
+                            ->placeholder(__('filament.resources.payment_methods.placeholders.name'))
                             ->required(),
                         Select::make('type')
-                            ->label('Tipe Metode')
+                            ->label(__('filament.resources.payment_methods.fields.type'))
                             ->options([
-                                'bank' => 'Bank Transfer',
-                                'qris' => 'QRIS',
-                                'ewallet' => 'E-Wallet',
+                                'bank' => __('filament.options.payment_method_type.bank'),
+                                'qris' => __('filament.options.payment_method_type.qris'),
+                                'ewallet' => __('filament.options.payment_method_type.ewallet'),
                             ])
                             ->required()
                             ->default('bank')
                             ->live(),
                         TextInput::make('account_number')
-                            ->label('Nomor Akun / Rekening / NMID')
-                            ->placeholder('Contoh: 1234567890')
+                            ->label(__('filament.resources.payment_methods.fields.account_number'))
+                            ->placeholder(__('filament.resources.payment_methods.placeholders.account_number'))
                             ->required(),
                         TextInput::make('account_holder')
-                            ->label('Nama Pemilik Akun')
-                            ->placeholder('Contoh: Baitul Maal LAZ')
+                            ->label(__('filament.resources.payment_methods.fields.account_holder'))
+                            ->placeholder(__('filament.resources.payment_methods.placeholders.account_holder'))
                             ->required(),
                         Toggle::make('is_active')
-                            ->label('Aktif')
+                            ->label(__('filament.resources.payment_methods.fields.is_active'))
                             ->required(),
                         FileUpload::make('logo')
-                            ->label('Logo Metode')
+                            ->label(__('filament.resources.payment_methods.fields.logo'))
                             ->image(),
                     ]),
-                Section::make('Konfigurasi QRIS')
-                    ->description('Wajib diisi jika tipe metode adalah QRIS.')
+                Section::make(__('filament.resources.payment_methods.sections.qris_configuration'))
+                    ->description(__('filament.resources.payment_methods.descriptions.qris_configuration'))
                     ->visible(fn ($get) => $get('type') === 'qris')
                     ->columns(2)
                     ->components([
                         FileUpload::make('qris_image')
-                            ->label('Upload Gambar QRIS')
-                            ->helperText('Upload gambar QRIS, payload EMV akan diisi otomatis.')
+                            ->label(__('filament.resources.payment_methods.fields.qris_image'))
+                            ->helperText(__('filament.resources.payment_methods.helper_text.qris_image'))
                             ->image()
                             ->disk('public')
                             ->directory('qris-uploads')
@@ -83,7 +83,7 @@ class PaymentMethodForm
                                     $set('qris_static_payload', null);
 
                                     Notification::make()
-                                        ->title('QRIS tidak valid')
+                                        ->title(__('filament.notifications.invalid_qris'))
                                         ->body($exception->getMessage())
                                         ->danger()
                                         ->send();
@@ -91,8 +91,8 @@ class PaymentMethodForm
                             })
                             ->columnSpanFull(),
                         Textarea::make('qris_static_payload')
-                            ->label('QRIS Static Payload (EMV)')
-                            ->helperText('Bisa otomatis dari upload gambar QRIS, atau diisi manual.')
+                            ->label(__('filament.resources.payment_methods.fields.qris_static_payload'))
+                            ->helperText(__('filament.resources.payment_methods.helper_text.qris_static_payload'))
                             ->rows(6)
                             ->maxLength(2048)
                             ->columnSpanFull(),

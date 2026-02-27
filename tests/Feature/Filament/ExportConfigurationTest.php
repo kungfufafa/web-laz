@@ -18,6 +18,7 @@ use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Facades\Filament;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Livewire\Livewire;
+use Spatie\Permission\Models\Permission;
 
 uses(RefreshDatabase::class);
 
@@ -66,4 +67,58 @@ test('all admin resources register expected table filters', function (string $li
     'payment methods filters' => [ListPaymentMethods::class, ['type', 'is_active']],
     'articles filters' => [ListArticles::class, ['is_published']],
     'videos filters' => [ListVideos::class, ['is_published']],
+]);
+
+test('export action is hidden when user does not have export permission', function (string $listPageClass, string $subject): void {
+    $member = User::factory()->create([
+        'role' => 'member',
+    ]);
+
+    $viewAnyPermission = Permission::query()->firstOrCreate([
+        'name' => "ViewAny:{$subject}",
+        'guard_name' => 'web',
+    ]);
+
+    $member->givePermissionTo([$viewAnyPermission]);
+
+    $this->actingAs($member);
+
+    Livewire::test($listPageClass)
+        ->assertActionHidden('export');
+})->with([
+    'donations export auth hidden' => [ListDonations::class, 'Donation'],
+    'member prayers export auth hidden' => [ListMemberPrayers::class, 'MemberPrayer'],
+    'users export auth hidden' => [ListUsers::class, 'User'],
+    'payment methods export auth hidden' => [ListPaymentMethods::class, 'PaymentMethod'],
+    'articles export auth hidden' => [ListArticles::class, 'Article'],
+    'videos export auth hidden' => [ListVideos::class, 'Video'],
+]);
+
+test('export action is visible when user has export permission', function (string $listPageClass, string $subject): void {
+    $member = User::factory()->create([
+        'role' => 'member',
+    ]);
+
+    $viewAnyPermission = Permission::query()->firstOrCreate([
+        'name' => "ViewAny:{$subject}",
+        'guard_name' => 'web',
+    ]);
+    $exportPermission = Permission::query()->firstOrCreate([
+        'name' => "Export:{$subject}",
+        'guard_name' => 'web',
+    ]);
+
+    $member->givePermissionTo([$viewAnyPermission, $exportPermission]);
+
+    $this->actingAs($member);
+
+    Livewire::test($listPageClass)
+        ->assertActionVisible('export');
+})->with([
+    'donations export auth visible' => [ListDonations::class, 'Donation'],
+    'member prayers export auth visible' => [ListMemberPrayers::class, 'MemberPrayer'],
+    'users export auth visible' => [ListUsers::class, 'User'],
+    'payment methods export auth visible' => [ListPaymentMethods::class, 'PaymentMethod'],
+    'articles export auth visible' => [ListArticles::class, 'Article'],
+    'videos export auth visible' => [ListVideos::class, 'Video'],
 ]);

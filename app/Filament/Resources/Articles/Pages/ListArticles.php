@@ -4,6 +4,7 @@ namespace App\Filament\Resources\Articles\Pages;
 
 use App\Filament\Exports\ArticleExporter;
 use App\Filament\Resources\Articles\ArticleResource;
+use App\Models\Article;
 use Filament\Actions\CreateAction;
 use Filament\Actions\ExportAction;
 use Filament\Actions\Exports\Enums\ExportFormat;
@@ -18,6 +19,7 @@ class ListArticles extends ListRecords
         return [
             CreateAction::make(),
             ExportAction::make()
+                ->authorize(fn (): bool => auth()->user()?->can('export', Article::class) ?? false)
                 ->exporter(ArticleExporter::class)
                 ->formats([ExportFormat::Csv, ExportFormat::Xlsx]),
         ];

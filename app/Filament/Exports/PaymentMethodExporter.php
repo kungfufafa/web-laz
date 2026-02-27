@@ -17,26 +17,26 @@ class PaymentMethodExporter extends Exporter
     {
         return [
             ExportColumn::make('id')
-                ->label('ID'),
+                ->label(__('filament.exports.payment_methods.columns.id')),
             ExportColumn::make('name')
-                ->label('Nama'),
+                ->label(__('filament.exports.payment_methods.columns.name')),
             ExportColumn::make('type')
-                ->label('Jenis'),
+                ->label(__('filament.exports.payment_methods.columns.type')),
             ExportColumn::make('account_number')
-                ->label('No. Rekening'),
+                ->label(__('filament.exports.payment_methods.columns.account_number')),
             ExportColumn::make('account_holder')
-                ->label('Atas Nama'),
+                ->label(__('filament.exports.payment_methods.columns.account_holder')),
             ExportColumn::make('is_active')
-                ->label('Aktif')
-                ->formatStateUsing(fn (?bool $state): string => $state ? 'Ya' : 'Tidak'),
+                ->label(__('filament.exports.payment_methods.columns.is_active'))
+                ->formatStateUsing(fn (?bool $state): string => $state ? __('filament.common.yes') : __('filament.common.no')),
             ExportColumn::make('qris_static_payload')
-                ->label('QRIS Payload')
+                ->label(__('filament.exports.payment_methods.columns.qris_static_payload'))
                 ->enabledByDefault(false),
             ExportColumn::make('qris_image')
-                ->label('QRIS Gambar')
+                ->label(__('filament.exports.payment_methods.columns.qris_image'))
                 ->enabledByDefault(false),
             ExportColumn::make('created_at')
-                ->label('Tanggal Dibuat'),
+                ->label(__('filament.exports.payment_methods.columns.created_at')),
         ];
     }
 

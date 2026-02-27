@@ -2,13 +2,13 @@
 
 namespace App\Policies;
 
-use Illuminate\Foundation\Auth\User as AuthUser;
 use Illuminate\Auth\Access\HandlesAuthorization;
+use Illuminate\Foundation\Auth\User as AuthUser;
 
 class UserPolicy
 {
     use HandlesAuthorization;
-    
+
     public function viewAny(AuthUser $authUser): bool
     {
         return $authUser->can('ViewAny:User');
@@ -27,6 +27,11 @@ class UserPolicy
     public function update(AuthUser $authUser): bool
     {
         return $authUser->can('Update:User');
+    }
+
+    public function export(AuthUser $authUser): bool
+    {
+        return $authUser->can('Export:User');
     }
 
     public function delete(AuthUser $authUser): bool
@@ -63,5 +68,4 @@ class UserPolicy
     {
         return $authUser->can('Reorder:User');
     }
-
 }

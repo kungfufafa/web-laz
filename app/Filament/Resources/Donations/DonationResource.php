@@ -12,19 +12,32 @@ use BackedEnum;
 use Filament\Resources\Resource;
 use Filament\Schemas\Schema;
 use Filament\Tables\Table;
-use UnitEnum;
 
 class DonationResource extends Resource
 {
     protected static ?string $model = Donation::class;
 
-    protected static ?string $modelLabel = 'Donasi';
-
-    protected static ?string $navigationLabel = 'Donasi';
-
-    protected static string|UnitEnum|null $navigationGroup = 'Keuangan';
-
     protected static string|BackedEnum|null $navigationIcon = 'heroicon-o-heart';
+
+    public static function getModelLabel(): string
+    {
+        return __('filament.resources.donations.model_label');
+    }
+
+    public static function getPluralModelLabel(): string
+    {
+        return __('filament.resources.donations.plural_model_label');
+    }
+
+    public static function getNavigationLabel(): string
+    {
+        return __('filament.resources.donations.navigation_label');
+    }
+
+    public static function getNavigationGroup(): ?string
+    {
+        return __('filament.navigation.groups.finance');
+    }
 
     public static function form(Schema $schema): Schema
     {

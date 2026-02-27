@@ -17,20 +17,20 @@ class MemberPrayerExporter extends Exporter
     {
         return [
             ExportColumn::make('id')
-                ->label('ID'),
+                ->label(__('filament.exports.member_prayers.columns.id')),
             ExportColumn::make('user.name')
-                ->label('Member'),
+                ->label(__('filament.exports.member_prayers.columns.member')),
             ExportColumn::make('content')
-                ->label('Isi Doa'),
+                ->label(__('filament.exports.member_prayers.columns.content')),
             ExportColumn::make('is_anonymous')
-                ->label('Anonim')
-                ->formatStateUsing(fn (?bool $state): string => $state ? 'Ya' : 'Tidak'),
+                ->label(__('filament.exports.member_prayers.columns.is_anonymous'))
+                ->formatStateUsing(fn (?bool $state): string => $state ? __('filament.common.yes') : __('filament.common.no')),
             ExportColumn::make('likes_count')
-                ->label('Jumlah Amin'),
+                ->label(__('filament.exports.member_prayers.columns.likes_count')),
             ExportColumn::make('status')
-                ->label('Status'),
+                ->label(__('filament.exports.member_prayers.columns.status')),
             ExportColumn::make('created_at')
-                ->label('Tanggal Dibuat'),
+                ->label(__('filament.exports.member_prayers.columns.created_at')),
         ];
     }
 

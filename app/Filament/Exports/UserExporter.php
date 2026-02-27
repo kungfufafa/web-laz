@@ -17,19 +17,19 @@ class UserExporter extends Exporter
     {
         return [
             ExportColumn::make('id')
-                ->label('ID'),
+                ->label(__('filament.exports.users.columns.id')),
             ExportColumn::make('name')
-                ->label('Nama'),
+                ->label(__('filament.exports.users.columns.name')),
             ExportColumn::make('email')
-                ->label('Email'),
+                ->label(__('filament.exports.users.columns.email')),
             ExportColumn::make('role')
-                ->label('Role'),
+                ->label(__('filament.exports.users.columns.role')),
             ExportColumn::make('phone')
-                ->label('No. HP'),
+                ->label(__('filament.exports.users.columns.phone')),
             ExportColumn::make('email_verified_at')
-                ->label('Email Terverifikasi'),
+                ->label(__('filament.exports.users.columns.email_verified_at')),
             ExportColumn::make('created_at')
-                ->label('Tanggal Registrasi'),
+                ->label(__('filament.exports.users.columns.created_at')),
         ];
     }
 

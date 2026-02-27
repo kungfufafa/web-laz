@@ -14,7 +14,7 @@ class DonationCategoryChartWidget extends ChartWidget
 
     public function getHeading(): ?string
     {
-        return 'Distribusi Donasi per Kategori';
+        return __('filament.widgets.donation_category_chart.heading');
     }
 
     protected function getData(): array
@@ -33,12 +33,12 @@ class DonationCategoryChartWidget extends ChartWidget
         return [
             'datasets' => [
                 [
-                    'label' => 'Total (Rp)',
+                    'label' => __('filament.widgets.donation_category_chart.total_label'),
                     'data' => $data->values()->toArray(),
                     'backgroundColor' => collect($data->keys())->map(fn ($category) => $colors[$category] ?? '#9CA3AF')->toArray(),
                 ],
             ],
-            'labels' => $data->keys()->map(fn ($category) => ucfirst($category))->toArray(),
+            'labels' => $data->keys()->map(fn ($category) => __('filament.options.donation_category.'.$category))->toArray(),
         ];
     }
 

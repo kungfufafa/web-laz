@@ -28,18 +28,18 @@ class ZakatStatsWidget extends BaseWidget
             ->sum('amount');
 
         return [
-            Stat::make('Zakat Fitrah', 'Rp ' . number_format($zakatFitrah, 0, ',', '.'))
-                ->description('Total zakat fitrah')
+            Stat::make(__('filament.widgets.zakat_stats.fitrah'), 'Rp '.number_format($zakatFitrah, 0, ',', '.'))
+                ->description(__('filament.widgets.zakat_stats.fitrah_description'))
                 ->descriptionIcon('heroicon-m-currency-dollar')
                 ->color('success'),
 
-            Stat::make('Zakat Maal', 'Rp ' . number_format($zakatMaal, 0, ',', '.'))
-                ->description('Total zakat maal')
+            Stat::make(__('filament.widgets.zakat_stats.maal'), 'Rp '.number_format($zakatMaal, 0, ',', '.'))
+                ->description(__('filament.widgets.zakat_stats.maal_description'))
                 ->descriptionIcon('heroicon-m-banknotes')
                 ->color('info'),
 
-            Stat::make('Zakat Profesi', 'Rp ' . number_format($zakatProfesi, 0, ',', '.'))
-                ->description('Total zakat profesi')
+            Stat::make(__('filament.widgets.zakat_stats.profession'), 'Rp '.number_format($zakatProfesi, 0, ',', '.'))
+                ->description(__('filament.widgets.zakat_stats.profession_description'))
                 ->descriptionIcon('heroicon-m-briefcase')
                 ->color('warning'),
         ];
