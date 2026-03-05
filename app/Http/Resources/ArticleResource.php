@@ -27,6 +27,7 @@ class ArticleResource extends JsonResource
             'title' => $this->title,
             'slug' => $this->slug,
             'content' => $this->content,
+            'excerpt' => $this->excerpt,
             'thumbnail' => $thumbnailUrl,
             'published_at' => $effectivePublishedAt?->toISOString(),
         ];

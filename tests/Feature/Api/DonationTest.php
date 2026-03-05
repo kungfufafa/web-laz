@@ -1,8 +1,11 @@
 <?php
 
 use App\Models\Donation;
+use App\Models\DonationCategory;
+use App\Models\DonationPaymentType;
 use App\Models\PaymentMethod;
 use App\Models\User;
+use Database\Seeders\DonationConfigurationSeeder;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 
@@ -26,6 +29,25 @@ test('can retrieve active payment methods', function () {
         ->assertJsonMissing(['name' => 'Inactive Bank']);
 });
 
+test('payment methods expose absolute media urls for uploaded assets', function () {
+    Storage::fake('public');
+    Storage::disk('public')->put('payment-methods/logo-bca.png', 'logo-content');
+    Storage::disk('public')->put('payment-methods/qris-bca.png', 'qris-content');
+
+    PaymentMethod::factory()->create([
+        'name' => 'Bank BCA',
+        'is_active' => true,
+        'logo' => 'payment-methods/logo-bca.png',
+        'qris_image' => 'payment-methods/qris-bca.png',
+    ]);
+
+    $response = $this->getJson('/api/payment-methods');
+
+    $response->assertStatus(200);
+    expect($response->json('data.0.logo_url'))->toEndWith('/storage/payment-methods/logo-bca.png');
+    expect($response->json('data.0.qris_image_url'))->toEndWith('/storage/payment-methods/qris-bca.png');
+});
+
 test('can retrieve donation flow configuration', function () {
     $response = $this->getJson('/api/donation-config');
 
@@ -36,6 +58,108 @@ test('can retrieve donation flow configuration', function () {
             'zakat' => ['calculator_types', 'defaults'],
             'recommended_amounts',
         ]);
+});
+
+test('donation config uses dynamic categories from database', function () {
+    $category = DonationCategory::create([
+        'key' => 'wakaf',
+        'label' => 'Wakaf',
+        'requires_context' => false,
+        'sort_order' => 1,
+        'is_active' => true,
+    ]);
+
+    DonationPaymentType::create([
+        'donation_category_id' => $category->id,
+        'key' => 'tunai',
+        'label' => 'Wakaf Tunai',
+        'is_active' => true,
+        'sort_order' => 1,
+    ]);
+
+    $response = $this->getJson('/api/donation-config');
+
+    $response->assertStatus(200)
+        ->assertJsonFragment([
+            'key' => 'wakaf',
+            'label' => 'Wakaf',
+        ])
+        ->assertJsonFragment([
+            'key' => 'tunai',
+            'label' => 'Wakaf Tunai',
+        ]);
+});
+
+test('donation config keeps calculator types empty when db catalog disables them', function () {
+    $zakatCategory = DonationCategory::create([
+        'key' => 'zakat',
+        'label' => 'Zakat',
+        'requires_context' => false,
+        'sort_order' => 1,
+        'is_active' => true,
+    ]);
+
+    DonationPaymentType::create([
+        'donation_category_id' => $zakatCategory->id,
+        'key' => 'fitrah',
+        'label' => 'Zakat Fitrah',
+        'is_zakat_calculator' => false,
+        'is_active' => true,
+        'sort_order' => 1,
+    ]);
+
+    $response = $this->getJson('/api/donation-config');
+
+    $response->assertStatus(200)
+        ->assertJsonPath('zakat.calculator_types', []);
+});
+
+test('donation config does not fallback to config when db catalog rows are all inactive', function () {
+    $category = DonationCategory::create([
+        'key' => 'zakat',
+        'label' => 'Zakat',
+        'requires_context' => false,
+        'sort_order' => 1,
+        'is_active' => false,
+    ]);
+
+    DonationPaymentType::create([
+        'donation_category_id' => $category->id,
+        'key' => 'fitrah',
+        'label' => 'Zakat Fitrah',
+        'is_zakat_calculator' => true,
+        'is_active' => false,
+        'sort_order' => 1,
+    ]);
+
+    $response = $this->getJson('/api/donation-config');
+
+    $response->assertStatus(200)
+        ->assertJsonPath('categories', [])
+        ->assertJsonPath('zakat.calculator_types', []);
+});
+
+test('seeded default donation categories are locked from deletion', function () {
+    $this->seed(DonationConfigurationSeeder::class);
+
+    $zakatCategory = DonationCategory::query()->where('key', 'zakat')->first();
+
+    expect($zakatCategory)->not()->toBeNull();
+    expect($zakatCategory?->is_locked)->toBeTrue();
+    expect(fn () => $zakatCategory?->delete())->toThrow(\LogicException::class);
+});
+
+test('seeded default donation payment types are locked from deletion', function () {
+    $this->seed(DonationConfigurationSeeder::class);
+
+    $zakatFitrah = DonationPaymentType::query()
+        ->where('key', 'fitrah')
+        ->whereHas('category', fn ($query) => $query->where('key', 'zakat'))
+        ->first();
+
+    expect($zakatFitrah)->not()->toBeNull();
+    expect($zakatFitrah?->is_locked)->toBeTrue();
+    expect(fn () => $zakatFitrah?->delete())->toThrow(\LogicException::class);
 });
 
 test('can calculate zakat fitrah amount', function () {
@@ -89,7 +213,7 @@ test('can create a donation', function () {
     expect($donation->user_id)->toEqual($user->id);
     expect($response->json('data.proof_image_url'))
         ->toBeString()
-        ->toContain('expiration=')
+        ->toContain('expires=')
         ->not->toContain('/api/media/');
 
     Storage::disk('local')->assertExists($donation->proof_image);
@@ -155,13 +279,49 @@ test('can create a donation without proof image', function () {
     expect($donation->proof_image)->toBeNull();
 });
 
-test('guest can create a donation without login', function () {
+test('zakat donation does not auto fill calculator type when client does not send it', function () {
+    $paymentMethod = PaymentMethod::factory()->create(['is_active' => true]);
+    $zakatCategory = DonationCategory::create([
+        'key' => 'zakat',
+        'label' => 'Zakat',
+        'requires_context' => false,
+        'sort_order' => 1,
+        'is_active' => true,
+    ]);
+
+    DonationPaymentType::create([
+        'donation_category_id' => $zakatCategory->id,
+        'key' => 'fitrah',
+        'label' => 'Zakat Fitrah',
+        'is_zakat_calculator' => true,
+        'is_active' => true,
+        'sort_order' => 1,
+    ]);
+
+    $response = $this->postJson('/api/donations', [
+        'amount' => 50000,
+        'category' => 'zakat',
+        'payment_type' => 'fitrah',
+        'payment_method_id' => $paymentMethod->id,
+        'guest_token' => 'guest-token-no-calculator',
+        'donor_name' => 'Guest No Calculator',
+        'donor_phone' => '08123456789',
+    ]);
+
+    $response->assertStatus(201);
+
+    $donation = Donation::latest('created_at')->first();
+    expect($donation)->not()->toBeNull();
+    expect($donation->calculator_type)->toBeNull();
+});
+
+test('guest can create non-zakat donation with configured payment type', function () {
     $paymentMethod = PaymentMethod::factory()->create(['is_active' => true]);
 
     $response = $this->postJson('/api/donations', [
         'amount' => 75000,
         'category' => 'sedekah',
-        'payment_type' => 'jariyah',
+        'payment_type' => 'umum',
         'context_slug' => 'sedekah-jariyah',
         'context_label' => 'Sedekah Jariyah',
         'payment_method_id' => $paymentMethod->id,
@@ -174,12 +334,13 @@ test('guest can create a donation without login', function () {
     $response->assertStatus(201)
         ->assertJsonPath('data.is_guest', true)
         ->assertJsonPath('data.category', 'sedekah')
-        ->assertJsonPath('data.payment_type', 'jariyah');
+        ->assertJsonPath('data.payment_type', 'umum');
 
     $donation = Donation::latest('created_at')->first();
     expect($donation)->not()->toBeNull();
     expect($donation->user_id)->toBeNull();
     expect($donation->guest_token)->toBe('guest-token-123');
+    expect($donation->payment_type)->toBe('umum');
 });
 
 test('sodaqoh alias is normalized to sedekah', function () {
@@ -188,7 +349,7 @@ test('sodaqoh alias is normalized to sedekah', function () {
     $response = $this->postJson('/api/donations', [
         'amount' => 50000,
         'category' => 'sodaqoh',
-        'payment_type' => 'jariyah',
+        'payment_type' => 'umum',
         'context_slug' => 'sedekah-umum',
         'context_label' => 'Sedekah Umum',
         'payment_method_id' => $paymentMethod->id,
@@ -199,7 +360,7 @@ test('sodaqoh alias is normalized to sedekah', function () {
 
     $response->assertStatus(201)
         ->assertJsonPath('data.category', 'sedekah')
-        ->assertJsonPath('data.payment_type', 'jariyah');
+        ->assertJsonPath('data.payment_type', 'umum');
 
     $donation = Donation::latest('created_at')->first();
     expect($donation)->not()->toBeNull();
@@ -274,7 +435,7 @@ test('payment type must match donation category', function () {
         ->assertJsonValidationErrors(['payment_type']);
 });
 
-test('infak and sedekah require a donation context', function () {
+test('infak and sedekah no longer require donation context', function () {
     $paymentMethod = PaymentMethod::factory()->create(['is_active' => true]);
 
     $response = $this->postJson('/api/donations', [
@@ -287,11 +448,11 @@ test('infak and sedekah require a donation context', function () {
         'donor_phone' => '08123456789',
     ]);
 
-    $response->assertStatus(422)
-        ->assertJsonValidationErrors(['context_label']);
+    $response->assertStatus(201)
+        ->assertJsonPath('data.payment_type', 'umum');
 });
 
-test('infak cannot use sedekah payment type', function () {
+test('non-zakat invalid payment type is rejected', function () {
     $paymentMethod = PaymentMethod::factory()->create(['is_active' => true]);
 
     $response = $this->postJson('/api/donations', [
@@ -306,6 +467,40 @@ test('infak cannot use sedekah payment type', function () {
 
     $response->assertStatus(422)
         ->assertJsonValidationErrors(['payment_type']);
+});
+
+test('can create donation with dynamic category and payment type', function () {
+    $category = DonationCategory::create([
+        'key' => 'wakaf',
+        'label' => 'Wakaf',
+        'requires_context' => false,
+        'sort_order' => 1,
+        'is_active' => true,
+    ]);
+
+    DonationPaymentType::create([
+        'donation_category_id' => $category->id,
+        'key' => 'tunai',
+        'label' => 'Wakaf Tunai',
+        'is_active' => true,
+        'sort_order' => 1,
+    ]);
+
+    $paymentMethod = PaymentMethod::factory()->create(['is_active' => true]);
+
+    $response = $this->postJson('/api/donations', [
+        'amount' => 100000,
+        'category' => 'wakaf',
+        'payment_type' => 'tunai',
+        'payment_method_id' => $paymentMethod->id,
+        'guest_token' => 'guest-token-wakaf',
+        'donor_name' => 'Wakif',
+        'donor_phone' => '08123456789',
+    ]);
+
+    $response->assertStatus(201)
+        ->assertJsonPath('data.category', 'wakaf')
+        ->assertJsonPath('data.payment_type', 'tunai');
 });
 
 test('can retrieve user donation history', function () {

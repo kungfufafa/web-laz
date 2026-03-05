@@ -8,54 +8,36 @@ use App\Http\Resources\DonationResource;
 use App\Http\Resources\PaymentMethodResource;
 use App\Models\Donation;
 use App\Models\PaymentMethod;
+use App\Services\DonationCatalogService;
 use App\Services\QrisPayloadService;
 use App\Services\ZakatCalculatorService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Validation\Rule;
 use InvalidArgumentException;
 
 class DonationController extends Controller
 {
-    public function donationConfig(): JsonResponse
+    public function donationConfig(DonationCatalogService $donationCatalogService): JsonResponse
     {
-        $categories = [];
-        foreach (config('donation.categories') as $key => $category) {
-            $categories[] = [
-                'key' => $key,
-                'label' => $category['label'],
-                'payment_types' => collect($category['payment_types'])
-                    ->map(fn (string $label, string $typeKey): array => [
-                        'key' => $typeKey,
-                        'label' => $label,
-                    ])
-                    ->values()
-                    ->all(),
-            ];
-        }
-
-        $calculatorTypes = collect(config('donation.zakat_calculator_types'))
-            ->map(fn (string $type): array => [
-                'key' => $type,
-                'label' => config("donation.categories.zakat.payment_types.{$type}", ucfirst($type)),
-            ])
-            ->all();
-
-        return response()->json([
-            'categories' => $categories,
-            'contexts' => config('donation.contexts'),
-            'zakat' => [
-                'calculator_types' => $calculatorTypes,
-                'defaults' => config('donation.zakat_defaults'),
-            ],
-            'recommended_amounts' => config('donation.recommended_amounts'),
-        ]);
+        return response()->json($donationCatalogService->donationConfigPayload());
     }
 
-    public function calculateZakat(Request $request, ZakatCalculatorService $calculator): JsonResponse
+    public function calculateZakat(
+        Request $request,
+        ZakatCalculatorService $calculator,
+        DonationCatalogService $donationCatalogService,
+    ): JsonResponse
     {
+        $calculatorTypes = $donationCatalogService->zakatCalculatorTypes();
+
+        if ($calculatorTypes === []) {
+            $calculatorTypes = ZakatCalculatorService::supportedTypes();
+        }
+
         $validated = $request->validate([
-            'type' => ['required', Rule::in(config('donation.zakat_calculator_types'))],
+            'type' => ['required', Rule::in($calculatorTypes)],
             'people_count' => ['nullable', 'integer', 'min:1'],
             'rice_price_per_kg' => ['nullable', 'numeric', 'min:1000'],
             'total_assets' => ['nullable', 'numeric', 'min:0'],
@@ -89,14 +71,17 @@ class DonationController extends Controller
         return PaymentMethodResource::collection($methods);
     }
 
-    public function store(StoreDonationRequest $request, QrisPayloadService $qrisPayloadService): JsonResponse
+    public function store(
+        StoreDonationRequest $request,
+        QrisPayloadService $qrisPayloadService,
+    ): JsonResponse
     {
         $validated = $request->validated();
         $user = $request->user('sanctum');
         $category = $request->normalizedCategory();
-
-        $calculatorType = $validated['calculator_type']
-            ?? ($category === 'zakat' ? $validated['payment_type'] : null);
+        $calculatorType = $category === 'zakat'
+            ? ($validated['calculator_type'] ?? null)
+            : null;
 
         $paymentMethod = PaymentMethod::query()->findOrFail((int) $validated['payment_method_id']);
         $dynamicQrisPayload = null;
@@ -191,6 +176,21 @@ class DonationController extends Controller
         $donations = $query->paginate(10);
 
         return DonationResource::collection($donations);
+    }
+
+    public function proofImage(Request $request, string $uuid): mixed
+    {
+        abort_unless($request->hasValidSignature(), 403);
+
+        $donation = Donation::where('uuid', $uuid)->firstOrFail();
+
+        abort_if(blank($donation->proof_image), 404);
+
+        $disk = Storage::disk(Donation::PROOF_IMAGE_DISK);
+
+        abort_unless($disk->exists($donation->proof_image), 404);
+
+        return $disk->response($donation->proof_image);
     }
 
     private function isQrisMethod(PaymentMethod $paymentMethod): bool

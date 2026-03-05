@@ -21,7 +21,7 @@ class MemberPrayerFactory extends Factory
             'content' => fake()->sentence(),
             'is_anonymous' => fake()->boolean(),
             'likes_count' => fake()->numberBetween(0, 100),
-            'status' => 'pending',
+            'status' => 'published',
         ];
     }
 }

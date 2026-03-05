@@ -149,6 +149,112 @@ return [
             ],
         ],
 
+        'donation_categories' => [
+            'model_label' => 'Donation Category',
+            'plural_model_label' => 'Donation Categories',
+            'navigation_label' => 'Donation Categories',
+            'sections' => [
+                'information' => 'Donation Category Information',
+                'advanced' => 'Technical Settings (Optional)',
+            ],
+            'descriptions' => [
+                'information' => 'Set the category name first, then enable or disable it for the app display.',
+                'advanced' => 'Use this section for system settings such as code and display order.',
+            ],
+            'fields' => [
+                'key' => 'System Code',
+                'label' => 'Category Name',
+                'description' => 'Description',
+                'requires_context' => 'Context Required',
+                'payment_types_count' => 'Type Count',
+                'sort_order' => 'Sort Order',
+                'is_active' => 'Active',
+                'is_locked' => 'System Default',
+                'updated_at' => 'Updated At',
+            ],
+            'placeholders' => [
+                'key' => 'Example: zakat, infaq, sadaqah',
+                'label' => 'Example: Zakat',
+            ],
+            'helper_text' => [
+                'label' => 'This name is displayed in the donation app.',
+                'key' => 'Optional. If left empty, the system code is auto-generated from the category name.',
+                'requires_context' => 'Enable this if the category must choose a context/program during donation.',
+                'sort_order' => 'Lower numbers are shown first.',
+            ],
+            'filters' => [
+                'active_status' => 'Active Status',
+                'active' => 'Active',
+                'inactive' => 'Inactive',
+            ],
+            'actions' => [
+                'add_payment_type' => 'Add Donation Type',
+            ],
+            'relations' => [
+                'payment_types' => 'Donation Types',
+            ],
+        ],
+
+        'donation_payment_types' => [
+            'model_label' => 'Donation Type',
+            'plural_model_label' => 'Donation Types',
+            'navigation_label' => 'Donation Types',
+            'sections' => [
+                'information' => 'Donation Type Information',
+                'rules' => 'Additional Rules (Optional)',
+                'advanced' => 'Technical Settings (Optional)',
+            ],
+            'descriptions' => [
+                'information' => 'Select a category, then enter the donation type name shown to donors.',
+                'rules' => 'Configure zakat calculator usage and special conditions when needed.',
+                'advanced' => 'Use this section for system code and display order.',
+            ],
+            'fields' => [
+                'category' => 'Category',
+                'key' => 'System Code',
+                'label' => 'Type Name',
+                'description' => 'Description',
+                'is_zakat_calculator' => 'Included in Zakat Calculator',
+                'min_amount' => 'Minimum Amount',
+                'max_amount' => 'Maximum Amount',
+                'require_context' => 'Require Program Context',
+                'require_intention_note' => 'Require Intention Note',
+                'conditions' => 'Additional Conditions',
+                'condition_name' => 'Condition Name',
+                'condition_value' => 'Condition Value',
+                'sort_order' => 'Sort Order',
+                'is_active' => 'Active',
+                'is_locked' => 'System Default',
+                'updated_at' => 'Updated At',
+            ],
+            'placeholders' => [
+                'key' => 'Example: maal, fitrah, general',
+                'label' => 'Example: Zakat Maal',
+                'condition_name' => 'Example: minimum_amount',
+                'condition_value' => 'Example: 50000',
+            ],
+            'helper_text' => [
+                'category' => 'Select which category this donation type belongs to.',
+                'label' => 'This name is shown as donation type option in the app.',
+                'key' => 'Optional. If left empty, the system code is auto-generated from the type name.',
+                'is_zakat_calculator' => 'Enable only for zakat-related types that use the calculator.',
+                'min_amount' => 'Optional. Set minimum allowed amount for this zakat type.',
+                'max_amount' => 'Optional. Set maximum allowed amount for this zakat type.',
+                'conditions' => 'Optional. Add key/value pairs for special rules (for example minimum_amount: 50000).',
+                'sort_order' => 'Lower numbers are shown first.',
+            ],
+            'filters' => [
+                'category' => 'Category',
+                'active_status' => 'Active Status',
+                'active' => 'Active',
+                'inactive' => 'Inactive',
+                'zakat_calculator' => 'Zakat Calculator',
+            ],
+            'actions' => [
+                'add_condition' => 'Add Condition',
+            ],
+        ],
+
         'member_prayers' => [
             'model_label' => 'Member Prayer',
             'plural_model_label' => 'Member Prayers',

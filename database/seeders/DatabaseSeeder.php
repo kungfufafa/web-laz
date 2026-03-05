@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         $this->call([
+            DonationConfigurationSeeder::class,
             UserSeeder::class,
             // PaymentMethodSeeder::class,
             // ArticleSeeder::class,

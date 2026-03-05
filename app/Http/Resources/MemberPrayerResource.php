@@ -29,7 +29,9 @@ class MemberPrayerResource extends JsonResource
             'user_name' => $isAnonymous ? 'Hamba Allah' : ($user?->name ?? 'Hamba Allah'),
             'is_anonymous' => $isAnonymous,
             'likes_count' => $this->likes_count,
-            'is_liked_by_me' => $request->user() ? $this->supports()->where('user_id', $request->user()->id)->exists() : false,
+            'is_liked_by_me' => $this->relationLoaded('supports')
+                ? $this->supports->isNotEmpty()
+                : false,
             'created_at' => $this->created_at?->toIso8601String(),
         ];
     }

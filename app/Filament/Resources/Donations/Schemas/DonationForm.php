@@ -3,11 +3,13 @@
 namespace App\Filament\Resources\Donations\Schemas;
 
 use App\Models\Donation;
+use App\Services\DonationCatalogService;
 use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Select;
 use Filament\Forms\Components\Textarea;
 use Filament\Forms\Components\TextInput;
 use Filament\Schemas\Components\Section;
+use Filament\Schemas\Components\Utilities\Get;
 use Filament\Schemas\Schema;
 
 class DonationForm
@@ -53,35 +55,21 @@ class DonationForm
                             ->required(),
                         Select::make('category')
                             ->label(__('filament.resources.donations.fields.category'))
-                            ->options([
-                                'zakat' => __('filament.options.donation_category.zakat'),
-                                'infak' => __('filament.options.donation_category.infak'),
-                                'sedekah' => __('filament.options.donation_category.sedekah'),
-                            ])
+                            ->options(fn (): array => app(DonationCatalogService::class)->categoriesForSelect())
                             ->required()
-                            ->default('infak')
+                            ->default(function (): ?string {
+                                $options = app(DonationCatalogService::class)->categoriesForSelect();
+
+                                return array_key_first($options);
+                            })
                             ->live()
                             ->afterStateUpdated(function ($set): void {
                                 $set('payment_type', null);
                             }),
                         Select::make('payment_type')
                             ->label(__('filament.resources.donations.fields.payment_type'))
-                            ->options(fn ($get): array => match ($get('category')) {
-                                'zakat' => [
-                                    'maal' => __('filament.options.donation_payment_type.maal'),
-                                    'fitrah' => __('filament.options.donation_payment_type.fitrah'),
-                                    'profesi' => __('filament.options.donation_payment_type.profesi'),
-                                ],
-                                'infak' => [
-                                    'kemanusiaan' => __('filament.options.donation_payment_type.kemanusiaan'),
-                                    'umum' => __('filament.options.donation_payment_type.infak_umum'),
-                                ],
-                                'sedekah' => [
-                                    'jariyah' => __('filament.options.donation_payment_type.jariyah'),
-                                    'umum' => __('filament.options.donation_payment_type.sedekah_umum'),
-                                ],
-                                default => [],
-                            })
+                            ->options(fn (Get $get): array => app(DonationCatalogService::class)
+                                ->paymentTypesForCategory((string) ($get('category') ?? '')))
                             ->placeholder(__('filament.resources.donations.placeholders.payment_type'))
                             ->required(),
                         TextInput::make('amount')
@@ -109,15 +97,6 @@ class DonationForm
                     ->description(__('filament.resources.donations.descriptions.program_context'))
                     ->columns(2)
                     ->components([
-                        TextInput::make('context_label')
-                            ->label(__('filament.resources.donations.fields.context_label'))
-                            ->maxLength(120),
-                        TextInput::make('context_slug')
-                            ->label(__('filament.resources.donations.fields.context_slug'))
-                            ->maxLength(120),
-                        TextInput::make('calculator_type')
-                            ->label(__('filament.resources.donations.fields.calculator_type'))
-                            ->maxLength(50),
                         Textarea::make('intention_note')
                             ->label(__('filament.resources.donations.fields.intention_note'))
                             ->maxLength(255)
@@ -129,6 +108,7 @@ class DonationForm
                             ->rule('json')
                             ->rows(6)
                             ->columnSpanFull()
+                            ->visible(fn (Get $get): bool => strtolower(trim((string) ($get('category') ?? ''))) === 'zakat')
                             ->formatStateUsing(fn ($state): ?string => is_array($state)
                                 ? json_encode($state, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE)
                                 : $state)

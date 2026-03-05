@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests\Api;
 
+use App\Services\DonationCatalogService;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 use Illuminate\Validation\Validator;
@@ -16,10 +17,10 @@ class StoreDonationRequest extends FormRequest
     protected function prepareForValidation(): void
     {
         if (is_string($this->input('category'))) {
-            $aliases = config('donation.category_aliases', []);
-            $raw = strtolower(trim($this->input('category')));
+            $raw = trim($this->input('category'));
+            $normalizedCategory = $this->donationCatalog()->normalizeCategory($raw);
             $this->merge([
-                'category' => $aliases[$raw] ?? $raw,
+                'category' => $normalizedCategory ?? strtolower($raw),
             ]);
         }
     }
@@ -30,23 +31,21 @@ class StoreDonationRequest extends FormRequest
     public function rules(): array
     {
         $user = $this->user('sanctum');
-        $categories = config('donation.categories', []);
-        $allPaymentTypes = collect($categories)
-            ->flatMap(fn (array $cat): array => array_keys($cat['payment_types']))
-            ->unique()
-            ->values()
-            ->all();
+        $catalog = $this->donationCatalog();
+        $categories = $catalog->validCategoryKeys();
+        $allPaymentTypes = $catalog->validPaymentTypeKeys();
+        $calculatorTypes = $catalog->zakatCalculatorTypes();
 
         return [
             'amount' => 'required|numeric|min:10000',
             'payment_method_id' => 'required|exists:payment_methods,id',
             'proof_image' => 'nullable|image|max:2048',
-            'category' => ['required', Rule::in(array_keys($categories))],
+            'category' => ['required', Rule::in($categories)],
             'payment_type' => ['required', Rule::in($allPaymentTypes)],
             'context_slug' => ['nullable', 'string', 'max:120'],
             'context_label' => ['nullable', 'string', 'max:120'],
             'intention_note' => ['nullable', 'string', 'max:255'],
-            'calculator_type' => ['nullable', Rule::in(config('donation.zakat_calculator_types', []))],
+            'calculator_type' => ['nullable', Rule::in($calculatorTypes)],
             'calculator_breakdown' => ['nullable', 'array'],
             'guest_token' => ['nullable', 'string', 'max:120', Rule::requiredIf($user === null)],
             'donor_name' => ['nullable', 'string', 'max:120', Rule::requiredIf($user === null)],
@@ -66,9 +65,9 @@ class StoreDonationRequest extends FormRequest
                 $data = $validator->validated();
                 $category = $data['category'];
                 $paymentType = $data['payment_type'];
-                $categories = config('donation.categories', []);
+                $catalog = $this->donationCatalog();
 
-                $allowedTypes = array_keys($categories[$category]['payment_types'] ?? []);
+                $allowedTypes = $catalog->validPaymentTypesForCategory($category);
                 if (! in_array($paymentType, $allowedTypes, true)) {
                     $validator->errors()->add(
                         'payment_type',
@@ -77,7 +76,8 @@ class StoreDonationRequest extends FormRequest
                 }
 
                 if (
-                    in_array($category, ['infak', 'sedekah'], true)
+                    $catalog->requiresContext($category)
+                    && $catalog->hasContextOptions($category)
                     && blank($data['context_label'] ?? null)
                 ) {
                     $validator->errors()->add(
@@ -96,6 +96,38 @@ class StoreDonationRequest extends FormRequest
                         'Calculator type does not match selected zakat type.',
                     );
                 }
+
+                $conditions = $catalog->paymentTypeConditions($category, $paymentType);
+
+                $minAmount = $conditions['min_amount'] ?? null;
+                if (is_numeric($minAmount) && (float) $data['amount'] < (float) $minAmount) {
+                    $validator->errors()->add(
+                        'amount',
+                        sprintf('Minimum donation amount for this type is %s.', number_format((float) $minAmount, 0, ',', '.')),
+                    );
+                }
+
+                $maxAmount = $conditions['max_amount'] ?? null;
+                if (is_numeric($maxAmount) && (float) $data['amount'] > (float) $maxAmount) {
+                    $validator->errors()->add(
+                        'amount',
+                        sprintf('Maximum donation amount for this type is %s.', number_format((float) $maxAmount, 0, ',', '.')),
+                    );
+                }
+
+                if (($conditions['require_context'] ?? false) && blank($data['context_label'] ?? null)) {
+                    $validator->errors()->add(
+                        'context_label',
+                        'This donation type requires context information.',
+                    );
+                }
+
+                if (($conditions['require_intention_note'] ?? false) && blank($data['intention_note'] ?? null)) {
+                    $validator->errors()->add(
+                        'intention_note',
+                        'This donation type requires an intention note.',
+                    );
+                }
             },
         ];
     }
@@ -106,5 +138,10 @@ class StoreDonationRequest extends FormRequest
     public function normalizedCategory(): string
     {
         return $this->input('category');
+    }
+
+    private function donationCatalog(): DonationCatalogService
+    {
+        return app(DonationCatalogService::class);
     }
 }

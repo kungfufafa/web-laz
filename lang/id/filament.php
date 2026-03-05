@@ -149,6 +149,112 @@ return [
             ],
         ],
 
+        'donation_categories' => [
+            'model_label' => 'Kategori Donasi',
+            'plural_model_label' => 'Kategori Donasi',
+            'navigation_label' => 'Kategori Donasi',
+            'sections' => [
+                'information' => 'Informasi Kategori Donasi',
+                'advanced' => 'Pengaturan Teknis (Opsional)',
+            ],
+            'descriptions' => [
+                'information' => 'Isi nama kategori, lalu aktifkan/nonaktifkan sesuai kebutuhan tampilan di aplikasi.',
+                'advanced' => 'Bagian ini untuk pengaturan sistem seperti kode dan urutan tampil.',
+            ],
+            'fields' => [
+                'key' => 'Kode Sistem',
+                'label' => 'Nama Kategori',
+                'description' => 'Deskripsi',
+                'requires_context' => 'Wajib Pilih Konteks',
+                'payment_types_count' => 'Jumlah Jenis',
+                'sort_order' => 'Urutan',
+                'is_active' => 'Aktif',
+                'is_locked' => 'Default Sistem',
+                'updated_at' => 'Diperbarui',
+            ],
+            'placeholders' => [
+                'key' => 'Contoh: zakat, infak, sedekah',
+                'label' => 'Contoh: Zakat',
+            ],
+            'helper_text' => [
+                'label' => 'Nama ini akan tampil di aplikasi donasi.',
+                'key' => 'Opsional. Jika dikosongkan, kode sistem dibuat otomatis dari nama kategori.',
+                'requires_context' => 'Aktifkan jika kategori ini wajib memilih konteks/program saat donasi.',
+                'sort_order' => 'Semakin kecil, semakin atas urutannya.',
+            ],
+            'filters' => [
+                'active_status' => 'Status Aktif',
+                'active' => 'Aktif',
+                'inactive' => 'Nonaktif',
+            ],
+            'actions' => [
+                'add_payment_type' => 'Tambah Jenis Donasi',
+            ],
+            'relations' => [
+                'payment_types' => 'Jenis Donasi',
+            ],
+        ],
+
+        'donation_payment_types' => [
+            'model_label' => 'Jenis Donasi',
+            'plural_model_label' => 'Jenis Donasi',
+            'navigation_label' => 'Jenis Donasi',
+            'sections' => [
+                'information' => 'Informasi Jenis Donasi',
+                'rules' => 'Aturan Tambahan (Opsional)',
+                'advanced' => 'Pengaturan Teknis (Opsional)',
+            ],
+            'descriptions' => [
+                'information' => 'Pilih kategori lalu isi nama jenis donasi yang akan tampil ke donatur.',
+                'rules' => 'Atur apakah jenis ini masuk kalkulator zakat dan kondisi khusus jika diperlukan.',
+                'advanced' => 'Bagian ini untuk kode sistem dan urutan tampil.',
+            ],
+            'fields' => [
+                'category' => 'Kategori',
+                'key' => 'Kode Sistem',
+                'label' => 'Nama Jenis',
+                'description' => 'Deskripsi',
+                'is_zakat_calculator' => 'Masuk Kalkulator Zakat',
+                'min_amount' => 'Nominal Minimum',
+                'max_amount' => 'Nominal Maksimum',
+                'require_context' => 'Wajib Isi Konteks Program',
+                'require_intention_note' => 'Wajib Isi Catatan Niat',
+                'conditions' => 'Kondisi Tambahan',
+                'condition_name' => 'Nama Kondisi',
+                'condition_value' => 'Nilai Kondisi',
+                'sort_order' => 'Urutan',
+                'is_active' => 'Aktif',
+                'is_locked' => 'Default Sistem',
+                'updated_at' => 'Diperbarui',
+            ],
+            'placeholders' => [
+                'key' => 'Contoh: maal, fitrah, umum',
+                'label' => 'Contoh: Zakat Maal',
+                'condition_name' => 'Contoh: minimum_amount',
+                'condition_value' => 'Contoh: 50000',
+            ],
+            'helper_text' => [
+                'category' => 'Pilih kategori yang menaungi jenis donasi ini.',
+                'label' => 'Nama ini akan tampil sebagai pilihan jenis donasi di aplikasi.',
+                'key' => 'Opsional. Jika dikosongkan, kode sistem dibuat otomatis dari nama jenis.',
+                'is_zakat_calculator' => 'Aktifkan hanya untuk jenis zakat yang membutuhkan kalkulator.',
+                'min_amount' => 'Opsional. Batasi nominal donasi minimum untuk jenis zakat ini.',
+                'max_amount' => 'Opsional. Batasi nominal donasi maksimum untuk jenis zakat ini.',
+                'conditions' => 'Opsional. Tambahkan pasangan nama/nilai jika ada syarat khusus (misalnya minimum_amount: 50000).',
+                'sort_order' => 'Semakin kecil, semakin atas urutannya.',
+            ],
+            'filters' => [
+                'category' => 'Kategori',
+                'active_status' => 'Status Aktif',
+                'active' => 'Aktif',
+                'inactive' => 'Nonaktif',
+                'zakat_calculator' => 'Kalkulator Zakat',
+            ],
+            'actions' => [
+                'add_condition' => 'Tambah Kondisi',
+            ],
+        ],
+
         'member_prayers' => [
             'model_label' => 'Doa Anggota',
             'plural_model_label' => 'Doa Anggota',

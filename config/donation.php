@@ -23,15 +23,13 @@ return [
         'infak' => [
             'label' => 'Infak',
             'payment_types' => [
-                'kemanusiaan' => 'Infak Kemanusiaan',
-                'umum' => 'Umum',
+                'umum' => 'Infak Umum',
             ],
         ],
         'sedekah' => [
             'label' => 'Sedekah',
             'payment_types' => [
-                'jariyah' => 'Sedekah Jariyah',
-                'umum' => 'Umum',
+                'umum' => 'Sedekah Umum',
             ],
         ],
     ],
@@ -62,42 +60,7 @@ return [
     |
     */
 
-    'contexts' => [
-        'infak' => [
-            [
-                'slug' => 'infak-pendidikan',
-                'label' => 'Infak Pendidikan',
-                'description' => 'Dukung beasiswa santri, guru ngaji, dan pendidikan umat.',
-            ],
-            [
-                'slug' => 'infak-kemanusiaan',
-                'label' => 'Infak Kemanusiaan',
-                'description' => 'Bantuan cepat tanggap bencana dan kebutuhan darurat.',
-            ],
-            [
-                'slug' => 'infak-operasional',
-                'label' => 'Infak Operasional Dakwah',
-                'description' => 'Mendukung operasional dakwah dan pelayanan umat.',
-            ],
-        ],
-        'sedekah' => [
-            [
-                'slug' => 'sedekah-jariyah',
-                'label' => 'Sedekah Jariyah',
-                'description' => 'Amal jangka panjang untuk pahala berkelanjutan.',
-            ],
-            [
-                'slug' => 'sedekah-subuh',
-                'label' => 'Sedekah Subuh',
-                'description' => 'Sedekah rutin di waktu subuh.',
-            ],
-            [
-                'slug' => 'sedekah-umum',
-                'label' => 'Sedekah Umum',
-                'description' => 'Sedekah bebas sesuai niat kebaikan Anda.',
-            ],
-        ],
-    ],
+    'contexts' => [],
 
     /*
     |--------------------------------------------------------------------------

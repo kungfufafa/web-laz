@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources;
 
+use App\Support\MediaUrl;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
-use Illuminate\Support\Facades\Storage;
 
 class PaymentMethodResource extends JsonResource
 {
@@ -21,8 +21,8 @@ class PaymentMethodResource extends JsonResource
             'type' => $this->type,
             'account_number' => $this->account_number,
             'account_holder' => $this->account_holder,
-            'logo_url' => $this->logo ? Storage::disk('public')->url($this->logo) : null,
-            'qris_image_url' => $this->qris_image ? Storage::disk('public')->url($this->qris_image) : null,
+            'logo_url' => MediaUrl::resolve($request, $this->logo),
+            'qris_image_url' => MediaUrl::resolve($request, $this->qris_image),
             'qris_static_payload' => $this->when(
                 filled($this->qris_static_payload),
                 $this->qris_static_payload

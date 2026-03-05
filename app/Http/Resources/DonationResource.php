@@ -2,8 +2,11 @@
 
 namespace App\Http\Resources;
 
+use App\Models\Donation;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
+use Illuminate\Support\Facades\Storage;
+use Illuminate\Support\Facades\URL;
 
 class DonationResource extends JsonResource
 {
@@ -27,7 +30,13 @@ class DonationResource extends JsonResource
             'status' => $this->status,
             'payment_method_id' => $this->payment_method_id,
             'payment_method_name' => $this->paymentMethod->name ?? null,
-            'proof_image_url' => $this->resource->resolveProofImageUrl(),
+            'proof_image_url' => $this->proof_image && Storage::disk(Donation::PROOF_IMAGE_DISK)->exists($this->proof_image)
+                ? URL::temporarySignedRoute(
+                    'api.donations.proof-image',
+                    now()->addHour(),
+                    ['uuid' => $this->uuid],
+                )
+                : null,
             'qris_payload' => $this->when(isset($this->qris_dynamic_payload), $this->qris_dynamic_payload),
             'donor_name' => $this->donor_name,
             'donor_phone' => $this->donor_phone,

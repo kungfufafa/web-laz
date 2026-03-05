@@ -4,6 +4,16 @@ namespace App\Services;
 
 class ZakatCalculatorService
 {
+    public const SUPPORTED_TYPES = ['fitrah', 'maal', 'profesi'];
+
+    /**
+     * @return list<string>
+     */
+    public static function supportedTypes(): array
+    {
+        return self::SUPPORTED_TYPES;
+    }
+
     /**
      * @param  array<string, mixed>  $data
      * @return array<string, mixed>|null

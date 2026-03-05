@@ -22,6 +22,7 @@ Route::get('/donation-config', [DonationController::class, 'donationConfig']);
 Route::post('/zakat/calculate', [DonationController::class, 'calculateZakat']);
 Route::post('/donations', [DonationController::class, 'store']);
 Route::get('/donations/history', [DonationController::class, 'history']);
+Route::get('/donations/{uuid}/proof-image', [DonationController::class, 'proofImage'])->name('api.donations.proof-image');
 
 Route::get('/articles', [ContentController::class, 'articles']);
 Route::get('/articles/{article:slug}', [ContentController::class, 'article']);

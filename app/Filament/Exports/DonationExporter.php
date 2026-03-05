@@ -3,6 +3,7 @@
 namespace App\Filament\Exports;
 
 use App\Models\Donation;
+use App\Services\DonationCatalogService;
 use Filament\Actions\Exports\Enums\ExportFormat;
 use Filament\Actions\Exports\ExportColumn;
 use Filament\Actions\Exports\Exporter;
@@ -27,9 +28,12 @@ class DonationExporter extends Exporter
             ExportColumn::make('donor_email')
                 ->label(__('filament.exports.donations.columns.donor_email')),
             ExportColumn::make('category')
-                ->label(__('filament.exports.donations.columns.category')),
+                ->label(__('filament.exports.donations.columns.category'))
+                ->formatStateUsing(fn (?string $state): string => app(DonationCatalogService::class)->categoryLabel($state)),
             ExportColumn::make('payment_type')
-                ->label(__('filament.exports.donations.columns.payment_type')),
+                ->label(__('filament.exports.donations.columns.payment_type'))
+                ->formatStateUsing(fn (?string $state): string => app(DonationCatalogService::class)
+                    ->paymentTypeLabel($state)),
             ExportColumn::make('context_label')
                 ->label(__('filament.exports.donations.columns.program')),
             ExportColumn::make('paymentMethod.name')

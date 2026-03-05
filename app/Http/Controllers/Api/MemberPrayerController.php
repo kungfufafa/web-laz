@@ -11,14 +11,20 @@ use Illuminate\Http\Resources\Json\AnonymousResourceCollection;
 
 class MemberPrayerController extends Controller
 {
-    public function index(): AnonymousResourceCollection
+    public function index(Request $request): AnonymousResourceCollection
     {
-        $prayers = MemberPrayer::query()
-            ->with('user')
-            ->latest()
-            ->paginate();
+        $userId = $request->user('sanctum')?->id;
 
-        return MemberPrayerResource::collection($prayers);
+        $query = MemberPrayer::query()
+            ->with('user')
+            ->where('status', 'published')
+            ->latest();
+
+        if ($userId) {
+            $query->with(['supports' => fn ($q) => $q->wherePivot('user_id', $userId)]);
+        }
+
+        return MemberPrayerResource::collection($query->paginate());
     }
 
     public function store(Request $request): MemberPrayerResource

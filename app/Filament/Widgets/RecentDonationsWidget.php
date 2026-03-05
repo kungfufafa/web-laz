@@ -4,6 +4,7 @@ namespace App\Filament\Widgets;
 
 use App\Filament\Widgets\Concerns\HasShieldWidgetPermission;
 use App\Models\Donation;
+use App\Services\DonationCatalogService;
 use Filament\Tables;
 use Filament\Tables\Table;
 use Filament\Widgets\TableWidget as BaseWidget;
@@ -39,7 +40,7 @@ class RecentDonationsWidget extends BaseWidget
                 Tables\Columns\TextColumn::make('category')
                     ->label(__('filament.widgets.recent_donations.columns.category'))
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => __('filament.options.donation_category.'.$state)),
+                    ->formatStateUsing(fn (string $state): string => app(DonationCatalogService::class)->categoryLabel($state)),
 
                 Tables\Columns\TextColumn::make('amount')
                     ->label(__('filament.widgets.recent_donations.columns.amount'))

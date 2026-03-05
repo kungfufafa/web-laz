@@ -3,6 +3,7 @@
 namespace App\Filament\Resources\Donations\Tables;
 
 use App\Models\Donation;
+use App\Services\DonationCatalogService;
 use Filament\Actions\Action;
 use Filament\Actions\BulkActionGroup;
 use Filament\Actions\DeleteBulkAction;
@@ -31,15 +32,13 @@ class DonationsTable
                 TextColumn::make('category')
                     ->label(__('filament.resources.donations.fields.category'))
                     ->badge()
-                    ->formatStateUsing(fn (string $state): string => __('filament.options.donation_category.'.$state))
+                    ->formatStateUsing(fn (string $state): string => app(DonationCatalogService::class)->categoryLabel($state))
                     ->searchable(),
                 TextColumn::make('payment_type')
                     ->label(__('filament.resources.donations.fields.payment_type'))
-                    ->formatStateUsing(function (string $state): string {
-                        return match ($state) {
-                            'umum' => __('filament.options.donation_payment_type.umum'),
-                            default => __('filament.options.donation_payment_type.'.$state),
-                        };
+                    ->formatStateUsing(function (string $state, ?Donation $record): string {
+                        return app(DonationCatalogService::class)
+                            ->paymentTypeLabel($state, $record?->category);
                     })
                     ->searchable(),
                 TextColumn::make('paymentMethod.name')
@@ -99,21 +98,10 @@ class DonationsTable
             ->filters([
                 SelectFilter::make('category')
                     ->label(__('filament.resources.donations.filters.category'))
-                    ->options([
-                        'zakat' => __('filament.options.donation_category.zakat'),
-                        'infak' => __('filament.options.donation_category.infak'),
-                        'sedekah' => __('filament.options.donation_category.sedekah'),
-                    ]),
+                    ->options(fn (): array => app(DonationCatalogService::class)->categoriesForSelect()),
                 SelectFilter::make('payment_type')
                     ->label(__('filament.resources.donations.filters.payment_type'))
-                    ->options([
-                        'maal' => __('filament.options.donation_payment_type.maal'),
-                        'fitrah' => __('filament.options.donation_payment_type.fitrah'),
-                        'profesi' => __('filament.options.donation_payment_type.profesi'),
-                        'kemanusiaan' => __('filament.options.donation_payment_type.kemanusiaan'),
-                        'jariyah' => __('filament.options.donation_payment_type.jariyah'),
-                        'umum' => __('filament.options.donation_payment_type.umum'),
-                    ]),
+                    ->options(fn (): array => app(DonationCatalogService::class)->allPaymentTypeOptions()),
                 SelectFilter::make('status')
                     ->label(__('filament.resources.donations.filters.status'))
                     ->default('pending')
