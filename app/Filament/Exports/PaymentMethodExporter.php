@@ -29,6 +29,9 @@ class PaymentMethodExporter extends Exporter
             ExportColumn::make('is_active')
                 ->label(__('filament.exports.payment_methods.columns.is_active'))
                 ->formatStateUsing(fn (?bool $state): string => $state ? __('filament.common.yes') : __('filament.common.no')),
+            ExportColumn::make('is_primary')
+                ->label(__('filament.exports.payment_methods.columns.is_primary'))
+                ->formatStateUsing(fn (?bool $state): string => $state ? __('filament.common.yes') : __('filament.common.no')),
             ExportColumn::make('qris_static_payload')
                 ->label(__('filament.exports.payment_methods.columns.qris_static_payload'))
                 ->enabledByDefault(false),

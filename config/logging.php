@@ -73,6 +73,20 @@ return [
             'replace_placeholders' => true,
         ],
 
+        'ppob' => [
+            'driver' => 'daily',
+            'path' => storage_path('logs/ppob.log'),
+            'level' => env('PPOB_LOG_LEVEL', env('LOG_LEVEL', 'info')),
+            'days' => env('PPOB_LOG_DAILY_DAYS', 30),
+            'replace_placeholders' => true,
+        ],
+
+        'ppob-alerts' => [
+            'driver' => 'stack',
+            'channels' => explode(',', (string) env('PPOB_ALERT_CHANNELS', 'ppob')),
+            'ignore_exceptions' => false,
+        ],
+
         'slack' => [
             'driver' => 'slack',
             'url' => env('LOG_SLACK_WEBHOOK_URL'),

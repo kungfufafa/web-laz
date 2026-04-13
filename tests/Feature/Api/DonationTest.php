@@ -29,6 +29,66 @@ test('can retrieve active payment methods', function () {
         ->assertJsonMissing(['name' => 'Inactive Bank']);
 });
 
+test('payment methods prioritize configured primary method and expose the primary flag', function () {
+    PaymentMethod::factory()->create([
+        'name' => 'Bank BCA',
+        'is_active' => true,
+    ]);
+    PaymentMethod::factory()->create([
+        'name' => 'Midtrans',
+        'is_active' => true,
+        'is_primary' => true,
+    ]);
+    PaymentMethod::factory()->create([
+        'name' => 'QRIS',
+        'is_active' => true,
+    ]);
+
+    $response = $this->getJson('/api/payment-methods');
+
+    $response->assertSuccessful();
+    expect($response->json('data.0.name'))->toBe('Midtrans');
+    expect($response->json('data.0.is_primary'))->toBeTrue();
+    expect($response->json('data.1.is_primary'))->toBeFalse();
+});
+
+test('payment methods fallback to midtrans ordering when no primary method is configured', function () {
+    PaymentMethod::factory()->create([
+        'name' => 'Bank BCA',
+        'is_active' => true,
+    ]);
+    PaymentMethod::factory()->create([
+        'name' => 'QRIS',
+        'is_active' => true,
+    ]);
+    PaymentMethod::factory()->create([
+        'name' => 'Midtrans Payment Gateway',
+        'is_active' => true,
+        'is_primary' => false,
+    ]);
+
+    $response = $this->getJson('/api/payment-methods');
+
+    $response->assertSuccessful();
+    expect($response->json('data.0.name'))->toBe('Midtrans Payment Gateway');
+    expect($response->json('data.0.is_primary'))->toBeFalse();
+});
+
+test('saving a primary payment method clears the primary flag from other methods', function () {
+    $existingPrimary = PaymentMethod::factory()->create([
+        'name' => 'Midtrans Lama',
+        'is_primary' => true,
+    ]);
+
+    $latestPrimary = PaymentMethod::factory()->create([
+        'name' => 'Midtrans Baru',
+        'is_primary' => true,
+    ]);
+
+    expect($existingPrimary->fresh()->is_primary)->toBeFalse();
+    expect($latestPrimary->fresh()->is_primary)->toBeTrue();
+});
+
 test('payment methods expose absolute media urls for uploaded assets', function () {
     Storage::fake('public');
     Storage::disk('public')->put('payment-methods/logo-bca.png', 'logo-content');
@@ -46,6 +106,7 @@ test('payment methods expose absolute media urls for uploaded assets', function 
     $response->assertStatus(200);
     expect($response->json('data.0.logo_url'))->toEndWith('/storage/payment-methods/logo-bca.png');
     expect($response->json('data.0.qris_image_url'))->toEndWith('/storage/payment-methods/qris-bca.png');
+    expect($response->json('data.0.is_primary'))->toBeFalse();
 });
 
 test('can retrieve donation flow configuration', function () {

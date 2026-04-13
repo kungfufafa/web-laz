@@ -10,12 +10,14 @@ use Filament\Tables\Columns\TextColumn;
 use Filament\Tables\Filters\SelectFilter;
 use Filament\Tables\Filters\TernaryFilter;
 use Filament\Tables\Table;
+use Illuminate\Database\Eloquent\Builder;
 
 class PaymentMethodsTable
 {
     public static function configure(Table $table): Table
     {
         return $table
+            ->modifyQueryUsing(fn (Builder $query): Builder => $query->orderedForCheckout())
             ->columns([
                 TextColumn::make('name')
                     ->label(__('filament.resources.payment_methods.fields.name'))
@@ -40,6 +42,9 @@ class PaymentMethodsTable
                     ->getStateUsing(fn ($record): bool => $record->type === 'qris' && filled($record->qris_image)),
                 IconColumn::make('is_active')
                     ->label(__('filament.resources.payment_methods.fields.is_active'))
+                    ->boolean(),
+                IconColumn::make('is_primary')
+                    ->label(__('filament.resources.payment_methods.fields.is_primary'))
                     ->boolean(),
                 TextColumn::make('created_at')
                     ->label(__('filament.resources.payment_methods.fields.created_at'))

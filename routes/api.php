@@ -5,6 +5,8 @@ use App\Http\Controllers\Api\ContentController;
 use App\Http\Controllers\Api\DonationController;
 use App\Http\Controllers\Api\MediaController;
 use App\Http\Controllers\Api\MemberPrayerController;
+use App\Http\Controllers\Api\PpobCallbackController;
+use App\Http\Controllers\Api\PpobController;
 use Illuminate\Support\Facades\Route;
 
 // API prefix is configured in bootstrap/app.php (apiPrefix: 'api')
@@ -28,6 +30,11 @@ Route::get('/articles', [ContentController::class, 'articles']);
 Route::get('/articles/{article:slug}', [ContentController::class, 'article']);
 Route::get('/videos', [ContentController::class, 'videos']);
 Route::get('/prayers', [MemberPrayerController::class, 'index']);
+Route::get('/ppob/products', [PpobController::class, 'products']);
+Route::get('/ppob/payment-channels', [PpobController::class, 'paymentChannels']);
+Route::post('/ppob/callbacks/midtrans', [PpobCallbackController::class, 'midtrans'])->name('api.ppob.callbacks.midtrans');
+Route::post('/ppob/callbacks/tripay', [PpobCallbackController::class, 'tripay'])->name('api.ppob.callbacks.tripay');
+Route::post('/ppob/callbacks/digiflazz', [PpobCallbackController::class, 'digiflazz'])->name('api.ppob.callbacks.digiflazz');
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::get('/user', [AuthController::class, 'user']);
@@ -35,4 +42,8 @@ Route::middleware('auth:sanctum')->group(function () {
 
     Route::post('/prayers', [MemberPrayerController::class, 'store']);
     Route::post('/prayers/{prayer}/amen', [MemberPrayerController::class, 'amen']);
+    Route::post('/ppob/inquiries', [PpobController::class, 'inquiry']);
+    Route::post('/ppob/transactions', [PpobController::class, 'store']);
+    Route::get('/ppob/transactions', [PpobController::class, 'history']);
+    Route::get('/ppob/transactions/{ppobTransaction}', [PpobController::class, 'show']);
 });

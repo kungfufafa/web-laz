@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             DonationConfigurationSeeder::class,
+            PpobPricingRuleSeeder::class,
             UserSeeder::class,
             // PaymentMethodSeeder::class,
             // ArticleSeeder::class,

@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use App\Models\User;
 use App\Support\MediaUrl;
+use App\Support\PhoneNumber;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -12,7 +13,7 @@ class AuthController extends Controller
 {
     public function register(Request $request)
     {
-        $normalizedPhone = $this->normalizePhoneNumber((string) $request->input('phone', ''));
+        $normalizedPhone = PhoneNumber::normalize((string) $request->input('phone', ''));
 
         $request->merge([
             'phone' => $normalizedPhone,
@@ -27,7 +28,7 @@ class AuthController extends Controller
             'phone.regex' => 'Format nomor telepon harus dimulai dengan 08, 628, atau +628',
         ]);
 
-        $resolvedEmail = $this->resolveRegistrationEmail(
+        $resolvedEmail = PhoneNumber::resolveEmail(
             (string) ($validated['email'] ?? ''),
             $validated['phone']
         );
@@ -50,7 +51,7 @@ class AuthController extends Controller
     public function login(Request $request)
     {
         $request->merge([
-            'phone' => $this->normalizePhoneNumber((string) $request->input('phone', '')),
+            'phone' => PhoneNumber::normalize((string) $request->input('phone', '')),
         ]);
 
         $validated = $request->validate([
@@ -61,7 +62,7 @@ class AuthController extends Controller
         ]);
 
         $user = User::query()
-            ->whereIn('phone', $this->phoneVariants($validated['phone']))
+            ->whereIn('phone', PhoneNumber::variants($validated['phone']))
             ->first();
 
         if (! $user || ! Hash::check($validated['password'], $user->password)) {
@@ -112,7 +113,7 @@ class AuthController extends Controller
     public function deleteAccount(Request $request)
     {
         $request->merge([
-            'phone' => $this->normalizePhoneNumber((string) $request->input('phone', '')),
+            'phone' => PhoneNumber::normalize((string) $request->input('phone', '')),
         ]);
 
         $validated = $request->validate([
@@ -122,7 +123,7 @@ class AuthController extends Controller
         ]);
 
         $user = User::query()
-            ->whereIn('phone', $this->phoneVariants($validated['phone']))
+            ->whereIn('phone', PhoneNumber::variants($validated['phone']))
             ->first();
 
         if (! $user) {
@@ -142,45 +143,5 @@ class AuthController extends Controller
         return response()->json([
             'message' => 'Akun berhasil dihapus',
         ]);
-    }
-
-    private function normalizePhoneNumber(string $phone): string
-    {
-        $normalizedPhone = preg_replace('/\D+/', '', $phone) ?? '';
-
-        if (str_starts_with($normalizedPhone, '62')) {
-            return '0' . substr($normalizedPhone, 2);
-        }
-
-        if (str_starts_with($normalizedPhone, '8')) {
-            return '0' . $normalizedPhone;
-        }
-
-        return $normalizedPhone;
-    }
-
-    /**
-     * @return array<int, string>
-     */
-    private function phoneVariants(string $normalizedPhone): array
-    {
-        $localPhone = ltrim($normalizedPhone, '0');
-
-        return array_values(array_filter(array_unique([
-            $normalizedPhone,
-            $localPhone !== '' ? '62' . $localPhone : null,
-            $localPhone !== '' ? '+62' . $localPhone : null,
-        ])));
-    }
-
-    private function resolveRegistrationEmail(string $email, string $normalizedPhone): string
-    {
-        $trimmedEmail = strtolower(trim($email));
-
-        if ($trimmedEmail !== '') {
-            return $trimmedEmail;
-        }
-
-        return $normalizedPhone . '@phone.lazalazhar5.local';
     }
 }

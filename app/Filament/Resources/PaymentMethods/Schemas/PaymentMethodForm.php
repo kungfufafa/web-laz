@@ -50,6 +50,9 @@ class PaymentMethodForm
                         Toggle::make('is_active')
                             ->label(__('filament.resources.payment_methods.fields.is_active'))
                             ->required(),
+                        Toggle::make('is_primary')
+                            ->label(__('filament.resources.payment_methods.fields.is_primary'))
+                            ->helperText(__('filament.resources.payment_methods.helper_text.is_primary')),
                         FileUpload::make('logo')
                             ->label(__('filament.resources.payment_methods.fields.logo'))
                             ->image()

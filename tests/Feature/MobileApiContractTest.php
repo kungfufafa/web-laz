@@ -8,8 +8,8 @@ use App\Models\User;
 use App\Models\Video;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Http\UploadedFile;
-use Illuminate\Testing\TestResponse;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Testing\TestResponse;
 
 uses(RefreshDatabase::class);
 
@@ -486,6 +486,7 @@ function mobilePaymentMethodContract(): array
         'account_holder',
         'logo_url',
         'qris_image_url',
+        'is_primary',
         'has_qris_template',
     ];
 }

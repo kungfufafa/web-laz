@@ -28,8 +28,7 @@ class DonationController extends Controller
         Request $request,
         ZakatCalculatorService $calculator,
         DonationCatalogService $donationCatalogService,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $calculatorTypes = $donationCatalogService->zakatCalculatorTypes();
 
         if ($calculatorTypes === []) {
@@ -66,7 +65,10 @@ class DonationController extends Controller
 
     public function paymentMethods()
     {
-        $methods = PaymentMethod::where('is_active', true)->get();
+        $methods = PaymentMethod::query()
+            ->active()
+            ->orderedForCheckout()
+            ->get();
 
         return PaymentMethodResource::collection($methods);
     }
@@ -74,8 +76,7 @@ class DonationController extends Controller
     public function store(
         StoreDonationRequest $request,
         QrisPayloadService $qrisPayloadService,
-    ): JsonResponse
-    {
+    ): JsonResponse {
         $validated = $request->validated();
         $user = $request->user('sanctum');
         $category = $request->normalizedCategory();

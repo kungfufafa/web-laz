@@ -23,6 +23,7 @@ class PaymentMethodResource extends JsonResource
             'account_holder' => $this->account_holder,
             'logo_url' => MediaUrl::resolve($request, $this->logo),
             'qris_image_url' => MediaUrl::resolve($request, $this->qris_image),
+            'is_primary' => (bool) $this->is_primary,
             'qris_static_payload' => $this->when(
                 filled($this->qris_static_payload),
                 $this->qris_static_payload

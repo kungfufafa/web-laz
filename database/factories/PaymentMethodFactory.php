@@ -29,6 +29,7 @@ class PaymentMethodFactory extends Factory
                 : null,
             'qris_image' => null,
             'is_active' => true,
+            'is_primary' => false,
         ];
     }
 }

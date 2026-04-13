@@ -12,6 +12,13 @@
         @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body class="bg-white dark:bg-zinc-950 text-zinc-900 dark:text-zinc-100 min-h-screen flex flex-col">
+        @php($prepaidJourneyOptions = $prepaidJourneyOptions ?? [])
+        @php($postpaidJourneyOptions = $postpaidJourneyOptions ?? [])
+        @php($activeGateway = $activeGateway ?? strtolower((string) config('services.ppob.payment_gateway', 'midtrans')))
+        @php($iconTone = [
+            'prepaid' => 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300',
+            'postpaid' => 'bg-emerald-100 dark:bg-emerald-900/40 text-emerald-600 dark:text-emerald-300',
+        ])
 
         {{-- Header --}}
         <header class="w-full border-b border-zinc-200 dark:border-zinc-800">
@@ -24,7 +31,10 @@
                 @if (Route::has('login'))
                     <nav class="flex items-center gap-3">
                         @auth
-                            <a href="{{ url('/admin') }}" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 transition-colors">
+                            <a href="{{ route('home') }}" class="rounded-lg border border-zinc-300 dark:border-zinc-700 px-4 py-2 text-sm font-medium hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-colors">
+                                PPOB
+                            </a>
+                            <a href="{{ url('/admin') }}" class="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-400">
                                 Dashboard
                             </a>
                         @else
@@ -75,6 +85,49 @@
                     </div>
                 </div>
             </section>
+
+            @if ($prepaidJourneyOptions !== [] || $postpaidJourneyOptions !== [])
+                <section class="border-t border-zinc-200 dark:border-zinc-800 px-6 py-16">
+                    <div class="mx-auto max-w-5xl">
+                        @if ($prepaidJourneyOptions !== [])
+                            <div class="mb-8">
+                                <div class="mt-4 grid grid-cols-6 gap-2">
+                                    @foreach ($prepaidJourneyOptions as $journey)
+                                        <a
+                                            href="{{ route('ppob.catalog', ['serviceType' => 'prepaid', 'journey' => $journey['key']]) }}"
+                                            class="group flex min-w-0 flex-col items-center justify-center gap-2 rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 px-2 py-4 text-center shadow-sm transition-colors hover:border-emerald-600 hover:bg-emerald-600 hover:text-white dark:hover:border-emerald-500 dark:hover:bg-emerald-500 dark:hover:text-white"
+                                        >
+                                            <span class="inline-flex h-9 w-9 items-center justify-center rounded-2xl {{ $iconTone['prepaid'] }} transition-colors group-hover:bg-white/15 group-hover:text-white dark:group-hover:bg-white/15 dark:group-hover:text-white">
+                                                @include('ppob.partials.journey-icon', ['journey' => $journey['key'], 'attributes' => new \Illuminate\View\ComponentAttributeBag(['class' => 'h-4 w-4'])])
+                                            </span>
+                                            <span class="block text-[11px] font-semibold leading-tight text-zinc-950 transition-colors group-hover:text-white dark:text-zinc-100 dark:group-hover:text-white sm:text-xs">{{ $journey['title'] }}</span>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+
+                        @if ($postpaidJourneyOptions !== [])
+                            <div>
+                                <p class="text-sm font-semibold text-zinc-500 dark:text-zinc-400">Tagihan</p>
+                                <div class="mt-4 grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+                                    @foreach ($postpaidJourneyOptions as $journey)
+                                        <a
+                                            href="{{ route('ppob.catalog', ['serviceType' => 'postpaid', 'journey' => $journey['key']]) }}"
+                                            class="group rounded-2xl border border-zinc-200 dark:border-zinc-700 bg-white dark:bg-zinc-900 p-5 shadow-sm transition-colors hover:border-emerald-600 hover:bg-emerald-600 hover:text-white dark:hover:border-emerald-500 dark:hover:bg-emerald-500 dark:hover:text-white"
+                                        >
+                                            <span class="inline-flex h-11 w-11 items-center justify-center rounded-2xl {{ $iconTone['postpaid'] }} transition-colors group-hover:bg-white/15 group-hover:text-white dark:group-hover:bg-white/15 dark:group-hover:text-white">
+                                                @include('ppob.partials.journey-icon', ['journey' => $journey['key'], 'attributes' => new \Illuminate\View\ComponentAttributeBag(['class' => 'h-5 w-5'])])
+                                            </span>
+                                            <span class="mt-4 block text-sm font-semibold text-zinc-950 transition-colors group-hover:text-white dark:text-zinc-100 dark:group-hover:text-white">{{ $journey['title'] }}</span>
+                                        </a>
+                                    @endforeach
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </section>
+            @endif
 
             {{-- Features --}}
             <section class="border-t border-zinc-200 dark:border-zinc-800 bg-zinc-50 dark:bg-zinc-900 px-6 py-16">
@@ -137,7 +190,7 @@
                                 href="https://maps.app.goo.gl/eqfW5GtsdQ1YNcT46?g_st=aw"
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white hover:bg-emerald-700 transition-colors"
+                                class="inline-flex items-center justify-center rounded-xl bg-emerald-600 px-5 py-3 text-sm font-semibold text-white transition-colors hover:bg-emerald-500 dark:bg-emerald-500 dark:hover:bg-emerald-400"
                             >
                                 Lihat Lokasi
                             </a>
